@@ -3,218 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kseniia Merza | UX/UI Designer</title>
+<title>Kseniia Merza — UX/UI Designer</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
-    color: #111;
-    overflow-x: hidden;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #111;
+}
+header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f9f9f9;
+  text-align: center;
+  padding: 0 20px;
+}
+h1 {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+h2 {
+  font-size: 32px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+p {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 10px auto;
+}
+.btn {
+  padding: 14px 28px;
+  margin-top: 20px;
+  background: black;
+  color: white;
+  text-decoration: none;
+  border-radius: 40px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+.btn:hover {
+  background: #222;
+  transform: translateY(-3px);
 }
 
 section {
-    padding: 120px 8%;
+  padding: 80px 10%;
 }
-
-h1 {
-    font-size: 64px;
-    font-weight: 700;
-    letter-spacing: -1px;
-}
-
-h2 {
-    font-size: 40px;
-    margin-bottom: 30px;
-}
-
-p {
-    font-size: 18px;
-    color: #555;
-    max-width: 700px;
-    line-height: 1.6;
-}
-
-.hero {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    animation: fadeIn 1.2s ease-out;
-}
-
-.btn {
-    margin-top: 40px;
-    padding: 14px 32px;
-    background: black;
-    color: white;
-    border-radius: 40px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
-
-.glass {
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
-}
-
 .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+  display: grid;
+  grid-gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
 }
 
 .case {
-    position: relative;
-    overflow: hidden;
-    border-radius: 24px;
-    cursor: pointer;
-    transition: transform 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.4s ease;
 }
-
 .case img {
-    width: 100%;
-    display: block;
-    transition: transform 0.6s ease;
+  width: 100%;
+  transition: 0.5s ease;
 }
-
 .case:hover img {
-    transform: scale(1.08);
+  transform: scale(1.08);
 }
-
-.case-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 30px;
-    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-    color: white;
+.case h3 {
+  margin: 15px 0 5px;
 }
-
-.fade-up {
-    opacity: 0;
-    transform: translateY(60px);
-    transition: all 1s ease;
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
 }
-
-.show {
-    opacity: 1;
-    transform: translateY(0);
+.skill {
+  background: #f1f1f1;
+  padding: 8px 14px;
+  border-radius: 40px;
+  font-size: 16px;
 }
 
 footer {
-    text-align: center;
-    padding: 60px;
-    color: #888;
-    font-size: 14px;
-}
-
-@keyframes fadeIn {
-    from {opacity:0;}
-    to {opacity:1;}
-}
-
-@media (max-width:768px){
-    h1 { font-size:42px; }
-    section { padding:80px 6%; }
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+  color: #777;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<section class="hero">
-    <h1>Kseniia Merza</h1>
-    <p>Designing intuitive digital products that blend business goals with exceptional user experience.</p>
-    <a href="#portfolio" class="btn">View Work</a>
-</section>
+<header>
+  <h1>Kseniia Merza</h1>
+  <h2>UX/UI Designer</h2>
+  <p>
+    I craft intuitive digital experiences with clean UI, human-first UX, and scalable design systems.
+  </p>
+  <a href="#portfolio" class="btn">View Portfolio</a>
+</header>
 
-<section class="fade-up">
-    <div class="glass">
-        <h2>About</h2>
-        <p>
-        UX/UI Designer with 8+ years experience in research, prototyping,
-        design systems and scalable digital products.
-        Focused on clarity, usability and premium interfaces.
-        </p>
+<section id="portfolio">
+  <h2>Portfolio</h2>
+  <div class="portfolio-grid">
+    <div class="case">
+      <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a" alt="Project Thumbnail">
+      <h3>Fintech Platform</h3>
+      <p>UX Design, Prototyping, Interaction</p>
     </div>
-</section>
-
-<section id="portfolio" class="fade-up">
-    <h2>Selected Work</h2>
-    <div class="portfolio-grid">
-
-        <div class="case">
-            <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a" alt="">
-            <div class="case-overlay">
-                <h3>Fintech Platform</h3>
-                <p>UX Research / Design System</p>
-            </div>
-        </div>
-
-        <div class="case">
-            <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb" alt="">
-            <div class="case-overlay">
-                <h3>CRM System</h3>
-                <p>Complex Interface / User Flow</p>
-            </div>
-        </div>
-
-        <div class="case">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="">
-            <div class="case-overlay">
-                <h3>Beauty E-commerce</h3>
-                <p>Mobile UX / Conversion Focus</p>
-            </div>
-        </div>
-
+    <div class="case">
+      <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb" alt="Project Thumbnail">
+      <h3>Enterprise CRM</h3>
+      <p>Complex Systems, UI Workflow</p>
     </div>
-</section>
-
-<section class="fade-up">
-    <div class="glass">
-        <h2>Contact</h2>
-        <p>Email: kseniia@email.com</p>
-        <a href="#" class="btn">LinkedIn</a>
+    <div class="case">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="Project Thumbnail">
+      <h3>Beauty E-commerce</h3>
+      <p>Mobile UX, Conversion Focus</p>
     </div>
+  </div>
 </section>
 
-<footer>
-© 2026 Kseniia Merza
-</footer>
+<section>
+  <h2>Experience & Skills</h2>
+  <p>
+    Worked with digital products across fintech, enterprise tools, consumer apps. Led UX research, prototyping,
+    UI design and collaborated closely with developers and PMs.
+  </p>
+  <div class="skills">
+    <div class="skill">UX Research</div>
+    <div class="skill">Wireframing</div>
+    <div class="skill">Prototyping</div>
+    <div class="skill">Design Systems</div>
+    <div class="skill">Figma</div>
+    <div class="skill">User Testing</div>
+    <div class="skill">Accessibility</div>
+  </div>
+</section>
 
-<script>
-const elements = document.querySelectorAll('.fade-up');
+<section>
+  <h2>Contact</h2>
+  <p>Email: kseniia.merza@example.com</p>
+</section>
 
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting){
-            entry.target.classList.add('show');
-        }
-    });
-});
-
-elements.forEach(el => observer.observe(el));
-</script>
+<footer>© 2026 Kseniia Merza</footer>
 
 </body>
 </html>
