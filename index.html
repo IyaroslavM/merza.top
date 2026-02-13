@@ -16,29 +16,30 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: #ffffff;
+    background: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
     color: #111;
-    scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 section {
-    padding: 100px 10%;
+    padding: 120px 8%;
 }
 
 h1 {
-    font-size: 56px;
+    font-size: 64px;
     font-weight: 700;
+    letter-spacing: -1px;
 }
 
 h2 {
-    font-size: 36px;
-    margin-bottom: 20px;
+    font-size: 40px;
+    margin-bottom: 30px;
 }
 
 p {
     font-size: 18px;
     color: #555;
-    max-width: 600px;
+    max-width: 700px;
     line-height: 1.6;
 }
 
@@ -47,30 +48,72 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(to bottom, #f5f5f7, #ffffff);
     animation: fadeIn 1.2s ease-out;
 }
 
 .btn {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 14px 28px;
+    margin-top: 40px;
+    padding: 14px 32px;
     background: black;
     color: white;
+    border-radius: 40px;
     text-decoration: none;
-    border-radius: 30px;
-    transition: 0.3s ease;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .btn:hover {
-    background: #333;
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
-.about, .experience, .contact {
+.glass {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.case {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+}
+
+.case img {
+    width: 100%;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.case:hover img {
+    transform: scale(1.08);
+}
+
+.case-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    color: white;
+}
+
+.fade-up {
     opacity: 0;
-    transform: translateY(40px);
-    transition: 0.8s ease;
+    transform: translateY(60px);
+    transition: all 1s ease;
 }
 
 .show {
@@ -78,33 +121,21 @@ p {
     transform: translateY(0);
 }
 
-.card {
-    background: #f5f5f7;
-    padding: 30px;
-    border-radius: 20px;
-    margin-top: 30px;
-    transition: 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
 footer {
     text-align: center;
-    padding: 40px;
-    font-size: 14px;
+    padding: 60px;
     color: #888;
+    font-size: 14px;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {opacity:0;}
+    to {opacity:1;}
 }
 
-@media (max-width: 768px) {
-    h1 { font-size: 38px; }
-    section { padding: 80px 6%; }
+@media (max-width:768px){
+    h1 { font-size:42px; }
+    section { padding:80px 6%; }
 }
 </style>
 </head>
@@ -113,59 +144,76 @@ footer {
 
 <section class="hero">
     <h1>Kseniia Merza</h1>
-    <p>UX/UI Designer creating intuitive digital experiences with user-centered thinking.</p>
-    <a href="#contact" class="btn">Contact Me</a>
+    <p>Designing intuitive digital products that blend business goals with exceptional user experience.</p>
+    <a href="#portfolio" class="btn">View Work</a>
 </section>
 
-<section class="about">
-    <h2>About Me</h2>
-    <p>
-        8+ years of experience in UX/UI design, research, prototyping and design systems. 
-        Focused on creating scalable and elegant digital products.
-    </p>
+<section class="fade-up">
+    <div class="glass">
+        <h2>About</h2>
+        <p>
+        UX/UI Designer with 8+ years experience in research, prototyping,
+        design systems and scalable digital products.
+        Focused on clarity, usability and premium interfaces.
+        </p>
+    </div>
 </section>
 
-<section class="experience">
-    <h2>Experience</h2>
+<section id="portfolio" class="fade-up">
+    <h2>Selected Work</h2>
+    <div class="portfolio-grid">
 
-    <div class="card">
-        <h3>IT X100</h3>
-        <p>Created mockups, prototypes, design systems and collaborated with engineers.</p>
+        <div class="case">
+            <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a" alt="">
+            <div class="case-overlay">
+                <h3>Fintech Platform</h3>
+                <p>UX Research / Design System</p>
+            </div>
+        </div>
+
+        <div class="case">
+            <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb" alt="">
+            <div class="case-overlay">
+                <h3>CRM System</h3>
+                <p>Complex Interface / User Flow</p>
+            </div>
+        </div>
+
+        <div class="case">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="">
+            <div class="case-overlay">
+                <h3>Beauty E-commerce</h3>
+                <p>Mobile UX / Conversion Focus</p>
+            </div>
+        </div>
+
     </div>
-
-    <div class="card">
-        <h3>SportLabs Group</h3>
-        <p>User research, wireframes, customer journeys and usability testing.</p>
-    </div>
-
-    <div class="card">
-        <h3>BETLAB</h3>
-        <p>Designed CRM systems, websites, user-flows and branding materials.</p>
-    </div>
-
 </section>
 
-<section class="contact" id="contact">
-    <h2>Contact</h2>
-    <p>Email: kseniia@email.com</p>
-    <a href="#" class="btn">LinkedIn</a>
+<section class="fade-up">
+    <div class="glass">
+        <h2>Contact</h2>
+        <p>Email: kseniia@email.com</p>
+        <a href="#" class="btn">LinkedIn</a>
+    </div>
 </section>
 
 <footer>
-    © 2026 Kseniia Merza
+© 2026 Kseniia Merza
 </footer>
 
 <script>
-const sections = document.querySelectorAll('.about, .experience, .contact');
+const elements = document.querySelectorAll('.fade-up');
 
-window.addEventListener('scroll', () => {
-    sections.forEach(section => {
-        const top = section.getBoundingClientRect().top;
-        if(top < window.innerHeight - 100){
-            section.classList.add('show');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting){
+            entry.target.classList.add('show');
         }
     });
 });
+
+elements.forEach(el => observer.observe(el));
 </script>
 
 </body>
