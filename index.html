@@ -1,32 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Kseniia Merza | UX/UI Designer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 60px;
-      background: #f8f9fa;
-    }
-    h1 { font-size: 36px; }
-    p { font-size: 18px; color: #555; }
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: black;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kseniia Merza | UX/UI Designer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #111;
+    scroll-behavior: smooth;
+}
+
+section {
+    padding: 100px 10%;
+}
+
+h1 {
+    font-size: 56px;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    color: #555;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(to bottom, #f5f5f7, #ffffff);
+    animation: fadeIn 1.2s ease-out;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 14px 28px;
+    background: black;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+}
+
+.about, .experience, .contact {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 0.8s ease;
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card {
+    background: #f5f5f7;
+    padding: 30px;
+    border-radius: 20px;
+    margin-top: 30px;
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+footer {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #888;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 38px; }
+    section { padding: 80px 6%; }
+}
+</style>
 </head>
+
 <body>
-  <h1>Kseniia Merza</h1>
-  <p>UX/UI Designer</p>
-  <p>Designing intuitive digital products with user-centered approach.</p>
-  <a href="#">Contact Me</a>
+
+<section class="hero">
+    <h1>Kseniia Merza</h1>
+    <p>UX/UI Designer creating intuitive digital experiences with user-centered thinking.</p>
+    <a href="#contact" class="btn">Contact Me</a>
+</section>
+
+<section class="about">
+    <h2>About Me</h2>
+    <p>
+        8+ years of experience in UX/UI design, research, prototyping and design systems. 
+        Focused on creating scalable and elegant digital products.
+    </p>
+</section>
+
+<section class="experience">
+    <h2>Experience</h2>
+
+    <div class="card">
+        <h3>IT X100</h3>
+        <p>Created mockups, prototypes, design systems and collaborated with engineers.</p>
+    </div>
+
+    <div class="card">
+        <h3>SportLabs Group</h3>
+        <p>User research, wireframes, customer journeys and usability testing.</p>
+    </div>
+
+    <div class="card">
+        <h3>BETLAB</h3>
+        <p>Designed CRM systems, websites, user-flows and branding materials.</p>
+    </div>
+
+</section>
+
+<section class="contact" id="contact">
+    <h2>Contact</h2>
+    <p>Email: kseniia@email.com</p>
+    <a href="#" class="btn">LinkedIn</a>
+</section>
+
+<footer>
+    © 2026 Kseniia Merza
+</footer>
+
+<script>
+const sections = document.querySelectorAll('.about, .experience, .contact');
+
+window.addEventListener('scroll', () => {
+    sections.forEach(section => {
+        const top = section.getBoundingClientRect().top;
+        if(top < window.innerHeight - 100){
+            section.classList.add('show');
+        }
+    });
+});
+</script>
+
 </body>
 </html>
