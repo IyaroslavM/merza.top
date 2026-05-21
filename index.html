@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Merza Family — Product × Design</title>
+  <title>Merza | Yaroslav &amp; Kseniya Merza — Product &amp; Design</title>
+  <link rel="canonical" href="https://merza.top/" />
+  <meta name="description" content="Merza family portfolio. Yaroslav Merza, Product Owner with 10+ yrs shipping digital products. Kseniya Merza, UX/UI Designer. Kyiv, Ukraine." />
 
   <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="16x16"  href="icons/favicon-16x16.png" />
@@ -13,11 +15,25 @@
   <meta name="theme-color"          content="#2E7D32" />
   <meta name="msapplication-TileColor" content="#2E7D32" />
 
-  <!-- SEO -->
-  <meta name="description" content="Merza Family — Product × Design. Yaroslav, Product Owner. Kseniya, UX/UI Designer." />
-  <meta property="og:title"       content="Merza Family — The Divide" />
+  <!-- Open Graph -->
+  <meta property="og:title"       content="Merza — Product × Design" />
   <meta property="og:description" content="Two disciplines. One family." />
+  <meta property="og:url"         content="https://merza.top/" />
   <meta property="og:type"        content="website" />
+  <meta property="og:image"       content="https://merza.top/og-image.jpg" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale"      content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Merza — Product × Design" />
+  <meta name="twitter:description" content="Yaroslav Merza, Product Owner. Kseniya Merza, UX/UI Designer." />
+  <meta name="twitter:image"       content="https://merza.top/og-image.jpg" />
+
+  <!-- Language -->
+  <meta http-equiv="content-language" content="en" />
+  <link rel="alternate" hreflang="en" href="https://merza.top/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,8 +43,55 @@
     html,body{margin:0;background:#080C14;color:#fff}
     #root{height:100%}
   </style>
+
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Yaroslav Merza",
+    "alternateName": "Iaroslav Merza",
+    "jobTitle": "Product Owner",
+    "url": "https://merza.top/",
+    "sameAs": ["https://www.linkedin.com/in/iaroslavmerza/"],
+    "worksFor": { "@type": "Organization", "name": "BROCARD" },
+    "address": { "@type": "PostalAddress", "addressCountry": "UA" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Kseniya Merza",
+    "jobTitle": "Product Designer",
+    "url": "https://merza.top/",
+    "sameAs": ["https://www.linkedin.com/in/kseniya-merza-08754077/"]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Merza Family — Product × Design",
+    "url": "https://merza.top/",
+    "description": "Portfolio of Yaroslav and Kseniya Merza."
+  }
+]
+  </script>
 </head>
 <body>
+  <noscript>
+    <main style="font-family:sans-serif;padding:40px;max-width:800px;margin:auto">
+      <h1>Yaroslav &amp; Kseniya Merza</h1>
+      <section>
+        <h2>Yaroslav Merza — Product Owner</h2>
+        <p>Digital product strategist with 10+ years turning complex business
+           challenges into scalable digital products. Currently at BROCARD.
+           Previously: Crystal Blockchain Analytics, DOC.ua, MSD Ukraine.</p>
+      </section>
+      <section>
+        <h2>Kseniya Merza — Product Designer</h2>
+        <p>Product designer crafting intuitive interfaces and meaningful user
+           experiences. Portfolio: Research, UX Flow, Metrics.</p>
+      </section>
+    </main>
+  </noscript>
   <div id="root"></div>
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -499,8 +562,8 @@ const PALETTES = {
 
 const PEOPLE = {
   y: {
-    label: "YAROSLAV",
-    surname: "Merza",
+    label: "Merza",
+    surname: "YAROSLAV",
     role: "Product Owner_",
     quietRole: "Product Owner",
     bio: "Digital product strategist with 10+ years turning complex business challenges into scalable digital products.",
@@ -520,10 +583,10 @@ const PEOPLE = {
     links: [{ label: "View LinkedIn", kind: "filled", href: "https://www.linkedin.com/in/iaroslavmerza/" }]
   },
   k: {
-    label: "KSENIYA",
-    surname: "Merza",
-    role: "UX / UI Designer",
-    quietRole: "UX / UI Designer",
+    label: "Merza",
+    surname: "KSENIYA",
+    role: "Product Designer",
+    quietRole: "Product Designer",
     bio: "Product designer crafting intuitive interfaces and meaningful user experiences.",
     timelineHead: "Craft",
     timeline: [
@@ -533,7 +596,7 @@ const PEOPLE = {
       { co: "Uteam software solutions",  role: "UX/UI Designer",      period: "Apr 2017 — Jun 2018" },
       { co: "Воробьевы горы",            role: "Web & Graphic Designer", period: "2014 — Apr 2017" }
     ],
-    projects: ["Wayfinder", "Slow Mornings", "Atelier"],
+    projects: ["Research", "UX Flow", "Metrics"],
     links: [
       { label: "View LinkedIn",  kind: "outlined", href: "https://www.linkedin.com/in/kseniya-merza-08754077/" },
       { label: "View Portfolio", kind: "filled"   }
