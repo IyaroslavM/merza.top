@@ -498,10 +498,10 @@ const PEOPLE = {
 }`,
     timelineHead: "Experience",
     timeline: [
-      { co: "BROCARD",                       role: "Product Owner",                          period: "2023 — Present" },
-      { co: "Crystal Blockchain Analytics",  role: "Digital Consultant",                     period: "2022 — Present" },
-      { co: "DOC.ua",                        role: "Product Owner",                          period: "2020 — 2022" },
-      { co: "MSD Ukraine",                   role: "Digital & Campaign Marketing Strategist", period: "2018 — 2020" }
+      { co: "BROCARD",                       role: "Product Owner",                           period: "2023 — Present",     href: "https://www.brocard.ua/" },
+      { co: "Crystal Blockchain Analytics",  role: "Freelance Consultant",                    period: "May 2022 — Feb 2025", href: "https://crystalintelligence.com/" },
+      { co: "DOC.ua",                        role: "Product Owner",                           period: "2020 — 2022",        href: "https://doc.ua/" },
+      { co: "MSD Ukraine",                   role: "Digital & Campaign Marketing Strategist", period: "2018 — 2020",        href: "https://www.msd.ua/" }
     ],
     links: [{ label: "View LinkedIn", kind: "filled", href: "https://www.linkedin.com/in/iaroslavmerza/" }]
   },
@@ -739,8 +739,11 @@ function App() {
     .tl-item::before{content:"";position:absolute;left:-25px;top:6px;width:9px;height:9px;border-radius:50%;
       background:${pal.yBg};border:1.5px solid ${pal.y}}
     .k .tl-item::before{background:${pal.kBg};border-color:${pal.k}}
-    .tl-co{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;font-weight:600;color:#fff;letter-spacing:-.005em}
-    .k .tl-co{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:20px;font-weight:600;color:#1A1A1F;letter-spacing:-.01em}
+    .tl-co{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;font-weight:600;color:#fff;letter-spacing:-.005em;text-decoration:none;display:inline-block}
+    .tl-co[href]{opacity:.92;transition:opacity .2s,letter-spacing .2s}
+    .tl-co[href]:hover{opacity:1;letter-spacing:.02em}
+    .k .tl-co{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:20px;font-weight:600;color:#1A1A1F;letter-spacing:-.01em;text-decoration:none;display:inline-block}
+    .k .tl-co[href]:hover{color:#7E3DA0}
     .tl-role{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;color:#fff;opacity:.85;margin-top:3px;letter-spacing:.04em}
     .k .tl-role{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15.5px;color:#7E3DA0;letter-spacing:.02em;opacity:1}
     .tl-per{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:5px}
@@ -906,7 +909,9 @@ function App() {
                       <div className="tl">
                         {PEOPLE.y.timeline.map((it,i)=>(
                           <div className="tl-item" key={i}>
-                            <div className="tl-co">{it.co}</div>
+                            {it.href
+                              ? <a className="tl-co" href={it.href} target="_blank" rel="noopener noreferrer">{it.co} ↗</a>
+                              : <div className="tl-co">{it.co}</div>}
                             <div className="tl-role">{it.role}</div>
                             <div className="tl-per">{it.period}</div>
                           </div>
@@ -978,7 +983,9 @@ function App() {
                       <div className="tl" style={{marginTop:32}}>
                         {PEOPLE.k.timeline.map((it,i)=>(
                           <div className="tl-item" key={i}>
-                            <div className="tl-co">{it.co}</div>
+                            {it.href
+                              ? <a className="tl-co" href={it.href} target="_blank" rel="noopener noreferrer">{it.co} ↗</a>
+                              : <div className="tl-co">{it.co}</div>}
                             <div className="tl-role">{it.role}</div>
                             <div className="tl-per">{it.period}</div>
                           </div>
