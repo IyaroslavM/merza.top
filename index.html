@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Merza — The Divide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+  <style>
+    html,body{margin:0;background:#080C14;color:#fff}
+    #root{height:100%}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel">
+
+// ─────────────────────────────────────────────────────────────────────────────
+// tweaks-panel.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),
+    0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-noncommentable=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">
+          {children}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// divide-decor.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+
+function NetworkField({ accent = "#3770E8", count = 7 }) {
+  const nodes = React.useMemo(() => {
+    const seed = (i, k) => {
+      const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
+      return x - Math.floor(x);
+    };
+    return Array.from({ length: count }, (_, i) => ({
+      x: 8 + seed(i, 1) * 84,
+      y: 12 + seed(i, 2) * 76,
+      r: 2 + seed(i, 3) * 3.5,
+      o: 0.25 + seed(i, 4) * 0.45,
+      delay: seed(i, 5) * 6,
+      dur: 8 + seed(i, 6) * 6
+    }));
+  }, [count]);
+
+  const edges = React.useMemo(() => {
+    const e = [];
+    for (let i = 0; i < nodes.length; i++) {
+      const d = nodes.map((n, j) => ({
+        j,
+        d: j === i ? 1e9 : Math.hypot(n.x - nodes[i].x, n.y - nodes[i].y)
+      })).sort((a, b) => a.d - b.d);
+      e.push([i, d[0].j]);
+      if (d[1] && d[1].d < 40) e.push([i, d[1].j]);
+    }
+    const seen = new Set();
+    return e.filter(([a, b]) => {
+      const k = a < b ? a + "-" + b : b + "-" + a;
+      if (seen.has(k)) return false;
+      seen.add(k); return true;
+    });
+  }, [nodes]);
+
+  return (
+    <svg className="net" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <radialGradient id="nodeGlow">
+          <stop offset="0%"  stopColor={accent} stopOpacity="0.7" />
+          <stop offset="60%" stopColor={accent} stopOpacity="0.15" />
+          <stop offset="100%" stopColor={accent} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {edges.map(([a, b], i) => (
+        <line key={i}
+          x1={nodes[a].x} y1={nodes[a].y}
+          x2={nodes[b].x} y2={nodes[b].y}
+          stroke={accent} strokeWidth="0.08" opacity="0.28"
+          vectorEffect="non-scaling-stroke" />
+      ))}
+      {nodes.map((n, i) => (
+        <g key={i} style={{ transformOrigin: `${n.x}% ${n.y}%`,
+                            animation: `drift ${n.dur}s ${n.delay}s ease-in-out infinite` }}>
+          <circle cx={n.x} cy={n.y} r={n.r * 2.2} fill="url(#nodeGlow)" opacity={n.o * 0.9} />
+          <circle cx={n.x} cy={n.y} r={n.r * 0.35} fill={accent} opacity={n.o} />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function GridTexture({ accent = "#3770E8" }) {
+  return (
+    <svg className="grid" aria-hidden="true">
+      <defs>
+        <pattern id="gridPat" width="32" height="32" patternUnits="userSpaceOnUse">
+          <path d="M 32 0 L 0 0 0 32" fill="none" stroke={accent} strokeWidth="0.3" opacity="0.18" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#gridPat)" />
+    </svg>
+  );
+}
+
+function BlobField({ accent = "#B85EE0" }) {
+  return (
+    <svg className="blobs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <radialGradient id="blobA"><stop offset="0%" stopColor={accent} stopOpacity="0.18" /><stop offset="100%" stopColor={accent} stopOpacity="0" /></radialGradient>
+        <radialGradient id="blobB"><stop offset="0%" stopColor={accent} stopOpacity="0.12" /><stop offset="100%" stopColor={accent} stopOpacity="0" /></radialGradient>
+      </defs>
+      <ellipse cx="78" cy="22" rx="22" ry="14" fill="url(#blobA)" transform="rotate(18 78 22)"
+               style={{ animation: "float 14s ease-in-out infinite" }} />
+      <ellipse cx="88" cy="78" rx="14" ry="20" fill="url(#blobB)" transform="rotate(-12 88 78)"
+               style={{ animation: "float 18s 2s ease-in-out infinite reverse" }} />
+      <ellipse cx="18" cy="60" rx="12" ry="9" fill="url(#blobA)" transform="rotate(8 18 60)"
+               style={{ animation: "float 22s 1s ease-in-out infinite" }} />
+
+      <path d="M -4 38 C 20 30, 38 46, 60 38 S 92 28, 110 36"
+            fill="none" stroke={accent} strokeWidth="0.18" opacity="0.32" vectorEffect="non-scaling-stroke" />
+      <path d="M -4 58 C 22 52, 42 64, 64 58 S 96 50, 110 56"
+            fill="none" stroke={accent} strokeWidth="0.12" opacity="0.22" vectorEffect="non-scaling-stroke" />
+      <path d="M -4 78 C 18 72, 40 84, 62 76 S 92 70, 110 74"
+            fill="none" stroke={accent} strokeWidth="0.14" opacity="0.18" vectorEffect="non-scaling-stroke" />
+
+      <circle cx="84" cy="14" r="1.2" fill={accent} opacity="0.22" />
+      <circle cx="86" cy="11" r="0.7" fill={accent} opacity="0.18" />
+      <circle cx="82" cy="12" r="0.4" fill={accent} opacity="0.14" />
+    </svg>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// divide.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TWEAK_DEFAULTS = {
+  "palette":      "emerald-orchid",
+  "splitMotion":  "magnetic",
+  "showDecor":    true,
+  "lineStyle":    "gradient",
+  "showWordmark": true
+};
+
+const PALETTES = {
+  "emerald-orchid":{ y: "#E8DDB5", k: "#B85EE0", yBg: "#2E7D32", kBg: "#FAFAFA", label: "Emerald × Orchid" },
+  "cobalt-orchid": { y: "#3770E8", k: "#B85EE0", yBg: "#080C14", kBg: "#FAFAFA", label: "Cobalt × Orchid" },
+  "ink-rose":      { y: "#7AB0FF", k: "#D26A8C", yBg: "#0B0F18", kBg: "#FBF7F4", label: "Ice × Rose" },
+  "amber-jade":    { y: "#E5A24A", k: "#3FA585", yBg: "#0E0B08", kBg: "#F4F7F2", label: "Amber × Jade" },
+  "mono":          { y: "#F1F1F1", k: "#1D1D1F", yBg: "#0A0A0B", kBg: "#FAFAFA", label: "Light × Dark" }
+};
+
+const PEOPLE = {
+  y: {
+    label: "YAROSLAV",
+    surname: "Merza",
+    role: "Product Owner_",
+    quietRole: "Product Owner",
+    bio: "Digital product strategist with 10+ years turning complex business challenges into scalable digital products.",
+    ghost: `{
+  discipline: "product",
+  shipped:    [ BROCARD, DOC.ua, Crystal ],
+  thinking:   "systems",
+  vision:     ∞
+}`,
+    timelineHead: "Experience",
+    timeline: [
+      { co: "BROCARD",                       role: "Product Owner",                          period: "2023 — Present" },
+      { co: "Crystal Blockchain Analytics",  role: "Digital Consultant",                     period: "2022 — Present" },
+      { co: "DOC.ua",                        role: "Product Owner",                          period: "2020 — 2022" },
+      { co: "MSD Ukraine",                   role: "Digital & Campaign Marketing Strategist", period: "2018 — 2020" }
+    ],
+    links: [{ label: "View LinkedIn", kind: "filled", href: "https://www.linkedin.com/in/iaroslavmerza/" }]
+  },
+  k: {
+    label: "KSENIYA",
+    surname: "Merza",
+    role: "UX / UI Designer",
+    quietRole: "UX / UI Designer",
+    bio: "Product designer crafting intuitive interfaces and meaningful user experiences.",
+    timelineHead: "Craft",
+    timeline: [
+      { co: "IT X100",                   role: "UX/UI Designer",      period: "Dec 2020 — Feb 2022" },
+      { co: "SportLabs Group",           role: "UX/UI Designer",      period: "Oct 2019 — Oct 2020" },
+      { co: "BETLAB",                    role: "Web Designer",        period: "Jun 2018 — Oct 2019" },
+      { co: "Uteam software solutions",  role: "UX/UI Designer",      period: "Apr 2017 — Jun 2018" },
+      { co: "Воробьевы горы",            role: "Web & Graphic Designer", period: "2014 — Apr 2017" }
+    ],
+    projects: ["Wayfinder", "Slow Mornings", "Atelier"],
+    links: [
+      { label: "View LinkedIn",  kind: "outlined", href: "https://www.linkedin.com/in/kseniya-merza-08754077/" },
+      { label: "View Portfolio", kind: "filled"   }
+    ]
+  }
+};
+
+function ProjectCards({ projects }) {
+  const [visible, setVisible] = React.useState([]);
+  React.useEffect(() => {
+    setVisible([]);
+    projects.forEach((_, i) => {
+      setTimeout(() => setVisible(v => [...v, i]), 120 + i * 110);
+    });
+  }, []);
+  return (
+    <div className="projects">
+      {projects.map((p, i) => (
+        <div key={i} className={"pcard" + (visible.includes(i) ? " visible" : "")}
+             style={{ transitionDelay: `${i * 0.08}s` }}>
+          [ {p} ]
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function useViewport() {
+  const [v, setV] = React.useState(() => ({
+    w: typeof window !== "undefined" ? window.innerWidth : 1440,
+    h: typeof window !== "undefined" ? window.innerHeight : 900
+  }));
+  React.useEffect(() => {
+    const on = () => setV({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, []);
+  return { ...v, isMobile: v.w < 760, axis: v.w < 760 ? "h" : "v" };
+}
+
+function useSplit({ axis, mode, hover, taken, motion }) {
+  let target = 0.5;
+  if (taken === "y") target = 1.0;
+  else if (taken === "k") target = 0.0;
+  else if (motion !== "off") {
+    if (hover === "y") target = 0.74;
+    if (hover === "k") target = 0.26;
+  }
+  if (motion === "off" && !taken) target = 0.5;
+
+  const [pos, setPos] = React.useState(0.5);
+  const posRef = React.useRef(0.5);
+  const targetRef = React.useRef(target);
+  targetRef.current = target;
+
+  React.useEffect(() => {
+    let raf;
+    const tick = () => {
+      const cur = posRef.current;
+      const next = cur + (targetRef.current - cur) * 0.12;
+      if (Math.abs(next - cur) > 0.0005) {
+        posRef.current = next;
+        setPos(next);
+        raf = requestAnimationFrame(tick);
+      } else {
+        posRef.current = targetRef.current;
+        setPos(targetRef.current);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+
+  return pos;
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const { w, h, isMobile, axis } = useViewport();
+  const pal = PALETTES[t.palette] || PALETTES["cobalt-orchid"];
+
+  const [hover, setHover] = React.useState(null);
+  const [taken, setTaken] = React.useState(null);
+  const motion = t.splitMotion;
+  const split = useSplit({ axis, hover, taken, motion });
+
+  const [magnet, setMagnet] = React.useState({ x: 0.5, y: 0.5 });
+  React.useEffect(() => {
+    if (taken || motion === "off" || isMobile) return;
+    const on = (e) => setMagnet({ x: e.clientX / w, y: e.clientY / h });
+    window.addEventListener("pointermove", on, { passive: true });
+    return () => window.removeEventListener("pointermove", on);
+  }, [taken, motion, isMobile, w, h]);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") setTaken(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const handleHover = (side) => { if (!taken) setHover(side); };
+  const handleLeave = () => setHover(null);
+  const handleTake  = (side) => { setTaken(side); setHover(null); };
+
+  const leftSize  = axis === "v" ? { width: (split * 100) + "%", height: "100%" }
+                                 : { width: "100%", height: (split * 100) + "%" };
+  const rightSize = axis === "v" ? { width: ((1 - split) * 100) + "%", height: "100%" }
+                                 : { width: "100%", height: ((1 - split) * 100) + "%" };
+  const dimY = taken === "k" ? 0 : (hover === "k" ? 0.5 : 1);
+  const dimK = taken === "y" ? 0 : (hover === "y" ? 0.5 : 1);
+
+  const css = `
+    *{box-sizing:border-box}
+    html,body,#root{margin:0;padding:0;height:100%;background:${pal.yBg};overflow:hidden}
+    body{font-family:'Geist',ui-sans-serif,system-ui,sans-serif;color:#fff;
+      -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+    .stage{position:fixed;inset:0;display:flex;${axis === "v" ? "flex-direction:row" : "flex-direction:column"};
+      overflow:hidden;cursor:default;background:#000}
+    .half{position:relative;overflow:hidden;transition:opacity .6s cubic-bezier(.4,0,.2,1)}
+    .half.y{background:${pal.yBg};color:#fff}
+    .half.k{background:${pal.kBg};color:#1A1A1F}
+
+    .net,.blobs,.grid{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+    .net{opacity:.95}
+    .grid{opacity:.5}
+
+    .ident{position:absolute;inset:0;display:flex;align-items:center;padding: 6vw 5vw;pointer-events:none}
+    .ident.y{justify-content:flex-start}
+    .ident.k{justify-content:flex-start}
+    .stack{display:flex;flex-direction:column;gap:14px;max-width:560px;pointer-events:auto}
+
+    .eyebrow{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.42em;
+      text-transform:uppercase;color:${pal.y};opacity:.7}
+    .k .eyebrow{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.32em;color:${pal.k};font-size:13px;font-weight:500}
+
+    .surname{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:clamp(40px,6vw,72px);
+      font-weight:700;letter-spacing:-.04em;line-height:.95;color:#fff}
+    .k .surname{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;
+      font-size:clamp(48px,7vw,84px);letter-spacing:-.02em;color:#141414}
+
+    .role{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.18em;color:#fff;font-weight:500}
+    .k .role{font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;letter-spacing:.14em;
+      color:#7E3DA0;font-style:italic;font-weight:500}
+    .role .cursor{display:inline-block;width:.55ch;background:#fff;margin-left:2px;animation:blink 1s steps(2,end) infinite}
+    .k .role .cursor{display:none}
+
+    .ghost{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;line-height:1.7;color:#fff;opacity:.42;
+      white-space:pre;margin-top:12px;max-width:42ch}
+
+    .bio{margin-top:12px;max-width:42ch}
+    .y .bio{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;line-height:1.7;color:rgba(255,255,255,.88)}
+    .k .bio{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;line-height:1.55;color:#1A1A1F;font-style:italic;font-weight:500}
+
+    .arrow{margin-top:18px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.32em;
+      text-transform:uppercase;color:#fff;opacity:.85;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+      pointer-events:auto;font-weight:500}
+    .k .arrow{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.18em;
+      color:#7E3DA0;opacity:1;font-size:15px;font-weight:600;text-transform:none}
+    .arrow:hover{opacity:1}
+    .arrow .ch{display:inline-block;transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .arrow:hover .ch{transform:translateX(6px)}
+
+    .divide{position:absolute;${axis === "v" ? "top:0;bottom:0" : "left:0;right:0"};
+      ${axis === "v" ? "width:1.5px" : "height:1.5px"};
+      pointer-events:none;z-index:5;transition:filter .4s ease}
+    .divide.glow{${axis === "v" ? "width:6px;filter:blur(6px)" : "height:6px;filter:blur(6px)"};opacity:.5}
+
+    .wordmark{position:absolute;top:32px;left:0;right:0;z-index:8;pointer-events:none;
+      text-align:center;line-height:1}
+    .wm-layer{position:absolute;top:0;left:0;right:0;text-align:center}
+    .wm-y{color:#fff}
+    .wm-k{color:#1A1A1F}
+    .wordmark .mark{font-family:'Cormorant Garamond',Georgia,serif;font-style:normal;font-weight:600;
+      font-size:30px;letter-spacing:.32em;display:inline-block;padding-left:.32em}
+
+    .wordmark .sub{display:flex;align-items:center;justify-content:center;margin-top:16px;line-height:1}
+    .wordmark .sub .side{font-family:'IBM Plex Mono',ui-monospace,monospace;
+      font-size:11px;letter-spacing:.5em;font-weight:500;opacity:.82;
+      text-transform:uppercase;width:8.6em;white-space:nowrap;display:inline-block}
+    .wordmark .sub .side.left{text-align:right;margin-right:-.5em}
+    .wordmark .sub .side.right{text-align:left}
+    .wordmark .sub .dot{display:inline-block;width:3px;height:3px;border-radius:999px;
+      background:currentColor;margin:0 .9em;opacity:.55}
+
+    .explore{position:absolute;bottom:22px;font-family:'IBM Plex Mono',ui-monospace,monospace;
+      font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#fff;opacity:.75;z-index:4;font-weight:500}
+    .explore.y{left:5vw}
+    .explore.k{right:5vw;color:#5A4060;opacity:.85}
+    .k .explore{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.18em;font-size:13px;font-weight:600;text-transform:none}
+
+    .taken .ident{display:none}
+    .detail{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;
+      padding: 6vh 6vw;pointer-events:none;opacity:0;transition:opacity .55s .15s cubic-bezier(.4,0,.2,1);
+      overflow-y:auto}
+    .taken .detail{opacity:1;pointer-events:auto}
+    .detail-shell{max-width:1180px;width:100%;margin:auto 0;display:flex;flex-direction:column;gap:48px}
+    .detail-header{display:flex;flex-direction:column;gap:10px;max-width:760px}
+    .detail-inner{display:grid;${axis === "v" ? "grid-template-columns: 1.05fr .95fr" : "grid-template-columns:1fr"};
+      gap:64px;align-items:start}
+    @media (max-width:760px){.detail-inner{grid-template-columns:1fr;gap:32px}.detail{padding:24px;justify-content:flex-start}.detail-shell{gap:28px;margin-top:24px}}
+
+    .detail-header .eyebrow,
+    .detail-header .surname,
+    .detail-header .role,
+    .detail-header .bio{margin:0}
+    .detail-header .surname{font-size:clamp(48px,7vw,88px)}
+    .k .detail-header .surname{font-size:clamp(54px,8vw,96px)}
+
+    .label{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.38em;
+      text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:22px;font-weight:500}
+    .k .label{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.18em;text-transform:none;color:#7E3DA0;font-size:15px;font-weight:600;margin-bottom:22px}
+
+    .tl{display:flex;flex-direction:column;gap:22px;padding-left:18px;border-left:1.5px solid ${pal.y}}
+    .k .tl{border-left-color:${pal.k}}
+    .tl-item{position:relative}
+    .tl-item::before{content:"";position:absolute;left:-25px;top:6px;width:9px;height:9px;border-radius:50%;
+      background:${pal.yBg};border:1.5px solid ${pal.y}}
+    .k .tl-item::before{background:${pal.kBg};border-color:${pal.k}}
+    .tl-co{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:14px;font-weight:600;color:#fff;letter-spacing:-.005em}
+    .k .tl-co{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:20px;font-weight:600;color:#1A1A1F;letter-spacing:-.01em}
+    .tl-role{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;color:#fff;opacity:.85;margin-top:3px;letter-spacing:.04em}
+    .k .tl-role{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15.5px;color:#7E3DA0;letter-spacing:.02em;opacity:1}
+    .tl-per{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:5px}
+    .k .tl-per{color:#7A7A82}
+
+    .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+    .pcard{aspect-ratio:5/4;border-radius:14px;background:color-mix(in srgb,${pal.k} 9%,#fff);
+      display:flex;align-items:center;justify-content:center;color:#7E3DA0;
+      font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15px;font-weight:600;letter-spacing:.02em;
+      border:1px solid color-mix(in srgb,${pal.k} 22%,transparent);position:relative;overflow:hidden;
+      opacity:0;transform:translateY(14px) scale(.97);
+      transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1),
+                 box-shadow .3s ease,border-color .3s ease;
+      cursor:default}
+    .pcard.visible{opacity:1;transform:none}
+    .pcard:hover{transform:translateY(-4px) scale(1.02);
+      box-shadow:0 10px 32px color-mix(in srgb,${pal.k} 18%,transparent);
+      border-color:color-mix(in srgb,${pal.k} 45%,transparent)}
+    .pcard::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 7px,color-mix(in srgb,${pal.k} 8%,transparent) 7px 8px);opacity:.6;transition:opacity .3s}
+    .pcard:hover::before{opacity:.9}
+    @keyframes pcardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+
+    .ctas{display:flex;flex-direction:column;gap:12px;margin-top:28px;max-width:280px}
+    .btn{appearance:none;border:1.5px solid rgba(255,255,255,.7);background:transparent;color:#fff;text-decoration:none;
+      height:48px;padding:0 22px;border-radius:999px;
+      font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.22em;font-weight:500;
+      text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;justify-content:space-between;gap:18px;
+      transition:background .25s,color .25s,transform .2s,border-color .25s}
+    .btn:hover{background:rgba(255,255,255,.12);border-color:#fff}
+    .btn.filled{background:${pal.y};color:#1A1A1F;border-color:${pal.y}}
+    .btn.filled:hover{background:#fff;border-color:#fff;transform:translateY(-1px)}
+    .k .btn{border-color:#7E3DA0;color:#7E3DA0;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;
+      letter-spacing:.06em;text-transform:none;font-size:15.5px;font-weight:600}
+    .k .btn:hover{background:rgba(126,61,160,.08);border-color:#7E3DA0}
+    .k .btn.filled{background:#7E3DA0;color:#fff;border-color:#7E3DA0}
+    .k .btn.filled:hover{background:#6A2E89;border-color:#6A2E89}
+    .btn .ar{font-size:14px}
+
+    .close{position:absolute;top:24px;right:24px;z-index:9;width:42px;height:42px;border-radius:999px;
+      border:1px solid currentColor;background:transparent;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;opacity:.7;transition:opacity .2s,transform .2s}
+    .y .close{color:#fff;border-color:rgba(255,255,255,.3)}
+    .k .close{color:#1A1A1F;border-color:rgba(0,0,0,.2)}
+    .close:hover{opacity:1;transform:rotate(90deg)}
+
+    .detail-shell > *{opacity:0;transform:translateY(12px);transition:opacity .55s .15s cubic-bezier(.4,0,.2,1),transform .6s .15s cubic-bezier(.4,0,.2,1)}
+    .taken .detail-shell > *{opacity:1;transform:none}
+    .taken .detail-shell > *:nth-child(2){transition-delay:.32s}
+    .detail-inner > *{opacity:0;transform:translateY(10px);transition:opacity .5s .35s,transform .55s .35s}
+    .taken .detail-inner > *{opacity:1;transform:none}
+    .taken .detail-inner > *:nth-child(2){transition-delay:.48s}
+
+    @keyframes blink{50%{background:transparent}}
+    @keyframes drift{
+      0%,100%{transform:translate(0,0)}
+      50%{transform:translate(2%,-1.5%)}
+    }
+    @keyframes float{
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(-3%,2%) scale(1.06)}
+    }
+
+    @media (max-width:760px){
+      .ident{padding:28px 22px;align-items:center}
+      .stack{gap:10px;max-width:100%}
+      .surname{font-size:46px}
+      .k .surname{font-size:50px}
+      .role{font-size:12px}
+      .k .role{font-size:16px}
+      .bio{font-size:14px;max-width:38ch}
+      .k .bio{font-size:17px;max-width:34ch}
+      .arrow{font-size:10px;margin-top:14px}
+      .k .arrow{font-size:14px}
+      .ghost{display:none}
+      .explore{font-size:9.5px;bottom:14px}
+      .k .explore{font-size:11.5px}
+
+      .wordmark{top:14px}
+      .wordmark .mark{font-size:18px;letter-spacing:.28em}
+      .wordmark .sub{margin-top:10px}
+      .wordmark .sub .side{font-size:9px;letter-spacing:.36em;width:7em}
+      .wordmark .sub .dot{margin:0 .7em}
+      .wm-y{clip-path:none !important}
+      .wm-k{display:none}
+
+      .detail{padding:64px 22px 28px}
+      .detail-shell{gap:26px}
+      .detail-header .surname{font-size:48px}
+      .k .detail-header .surname{font-size:52px}
+      .detail-inner{gap:28px}
+      .tl{gap:18px}
+      .tl-co{font-size:14px}
+      .k .tl-co{font-size:18px}
+      .projects{gap:10px}
+      .ctas{max-width:100%}
+      .close{top:14px;right:14px;width:38px;height:38px}
+    }
+
+    @media (max-width:380px){
+      .surname{font-size:40px}
+      .k .surname{font-size:44px}
+    }
+  `;
+
+  const lineGradY = `linear-gradient(${axis === "v" ? "180deg" : "90deg"},
+      ${pal.y}00 0%, ${pal.y}E6 30%, #ffffff4D 50%, ${pal.k}E6 70%, ${pal.k}00 100%)`;
+  const lineGradSolid = pal.y;
+  const lineGradMono = `linear-gradient(${axis === "v" ? "180deg" : "90deg"},
+      transparent 0%, currentColor 50%, transparent 100%)`;
+
+  const lineBg = t.lineStyle === "solid" ? lineGradSolid
+              : t.lineStyle === "subtle" ? lineGradMono
+              : lineGradY;
+
+  const mag = (motion === "magnetic" && !taken && !isMobile)
+    ? (axis === "v" ? (magnet.y - 0.5) * 6 : (magnet.x - 0.5) * 6) : 0;
+
+  return (
+    <React.Fragment>
+      <style>{css}</style>
+
+      <div className={"stage" + (taken ? " taken" : "")}>
+        {/* LEFT (Yaroslav) */}
+        <section className={"half y" + (taken === "y" ? " taken" : "")}
+          style={{ ...leftSize, opacity: dimY }}
+          onMouseEnter={() => handleHover("y")}
+          onMouseLeave={handleLeave}
+          onClick={() => !taken && handleTake("y")}>
+          {t.showDecor && <GridTexture accent={pal.y} />}
+          {t.showDecor && <NetworkField accent={pal.y} />}
+
+          <div className="ident y">
+            <div className="stack">
+              <div className="eyebrow">{PEOPLE.y.label}</div>
+              <div className="surname">{PEOPLE.y.surname}</div>
+              <div className="role">{PEOPLE.y.role.replace("_","")}<span className="cursor">&nbsp;</span></div>
+              {!taken && <pre className="ghost" aria-hidden="true">{PEOPLE.y.ghost}</pre>}
+              {!taken && (
+                <span className="arrow" onClick={(e)=>{e.stopPropagation();handleTake("y");}}>
+                  expand <span className="ch">→</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {!taken && <div className="explore y">↓ systems · strategy · product</div>}
+
+          {taken === "y" && (
+            <React.Fragment>
+              <button className="close" onClick={(e)=>{e.stopPropagation();setTaken(null);}} aria-label="Close">✕</button>
+              <div className="detail">
+                <div className="detail-shell">
+                  <header className="detail-header">
+                    <div className="eyebrow">{PEOPLE.y.label}</div>
+                    <div className="surname">{PEOPLE.y.surname}</div>
+                    <div className="role">{PEOPLE.y.role.replace("_","")}<span className="cursor">&nbsp;</span></div>
+                    <p className="bio">{PEOPLE.y.bio}</p>
+                  </header>
+                  <div className="detail-inner">
+                    <div>
+                      <div className="label">{PEOPLE.y.timelineHead}</div>
+                      <div className="tl">
+                        {PEOPLE.y.timeline.map((it,i)=>(
+                          <div className="tl-item" key={i}>
+                            <div className="tl-co">{it.co}</div>
+                            <div className="tl-role">{it.role}</div>
+                            <div className="tl-per">{it.period}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="label">Connect</div>
+                      <div className="ctas">
+                        {PEOPLE.y.links.map((l,i)=>(
+                          l.href
+                            ? <a key={i} href={l.href} target="_blank" rel="noopener noreferrer" className={"btn " + (l.kind === "filled" ? "filled" : "")}>
+                                <span>{l.label}</span><span className="ar">→</span>
+                              </a>
+                            : <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")}>
+                                <span>{l.label}</span><span className="ar">→</span>
+                              </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </React.Fragment>
+          )}
+        </section>
+
+        {/* RIGHT (Kseniya) */}
+        <section className={"half k" + (taken === "k" ? " taken" : "")}
+          style={{ ...rightSize, opacity: dimK }}
+          onMouseEnter={() => handleHover("k")}
+          onMouseLeave={handleLeave}
+          onClick={() => !taken && handleTake("k")}>
+          {t.showDecor && <BlobField accent={pal.k} />}
+
+          <div className="ident k">
+            <div className="stack">
+              <div className="eyebrow">{PEOPLE.k.label}</div>
+              <div className="surname">{PEOPLE.k.surname}</div>
+              <div className="role">{PEOPLE.k.role}</div>
+              {!taken && (
+                <p className="bio" style={{maxWidth:"34ch"}}>{PEOPLE.k.bio}</p>
+              )}
+              {!taken && (
+                <span className="arrow" onClick={(e)=>{e.stopPropagation();handleTake("k");}}>
+                  expand <span className="ch">→</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {!taken && <div className="explore k">craft · interface · feeling</div>}
+
+          {taken === "k" && (
+            <React.Fragment>
+              <button className="close" onClick={(e)=>{e.stopPropagation();setTaken(null);}} aria-label="Close">✕</button>
+              <div className="detail">
+                <div className="detail-shell">
+                  <header className="detail-header">
+                    <div className="eyebrow">{PEOPLE.k.label}</div>
+                    <div className="surname">{PEOPLE.k.surname}</div>
+                    <div className="role">{PEOPLE.k.role}</div>
+                    <p className="bio" style={{maxWidth:"42ch"}}>{PEOPLE.k.bio}</p>
+                  </header>
+                  <div className="detail-inner">
+                    <div>
+                      <div className="label">{PEOPLE.k.timelineHead}</div>
+                      <ProjectCards projects={PEOPLE.k.projects} />
+                      <div className="tl" style={{marginTop:32}}>
+                        {PEOPLE.k.timeline.map((it,i)=>(
+                          <div className="tl-item" key={i}>
+                            <div className="tl-co">{it.co}</div>
+                            <div className="tl-role">{it.role}</div>
+                            <div className="tl-per">{it.period}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="label">Connect</div>
+                      <div className="ctas">
+                        {PEOPLE.k.links.map((l,i)=>(
+                          l.href
+                            ? <a key={i} href={l.href} target="_blank" rel="noopener noreferrer" className={"btn " + (l.kind === "filled" ? "filled" : "")}>
+                                <span>{l.label}</span><span className="ar">→</span>
+                              </a>
+                            : <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")}>
+                                <span>{l.label}</span><span className="ar">→</span>
+                              </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </React.Fragment>
+          )}
+        </section>
+
+        {/* Divide line */}
+        <div className="divide glow" aria-hidden="true" style={{
+          [axis === "v" ? "left" : "top"]: `calc(${split * 100}% + ${mag}px)`,
+          transform: axis === "v" ? "translateX(-50%)" : "translateY(-50%)",
+          background: lineBg
+        }} />
+        <div className="divide" aria-hidden="true" style={{
+          [axis === "v" ? "left" : "top"]: `calc(${split * 100}% + ${mag}px)`,
+          transform: axis === "v" ? "translateX(-50%)" : "translateY(-50%)",
+          background: lineBg
+        }} />
+
+        {/* Wordmark */}
+        {t.showWordmark && !taken && (
+          <div className="wordmark" aria-hidden="true">
+            <div className="wm-layer wm-y" style={{ clipPath: `inset(-6px ${(1 - split) * 100}% -6px 0)` }}>
+              <span className="mark">MERZA FAMILY</span>
+              <span className="sub">
+                <span className="side left">product</span>
+                <span className="dot"></span>
+                <span className="side right">design</span>
+              </span>
+            </div>
+            <div className="wm-layer wm-k" style={{ clipPath: `inset(-6px 0 -6px ${split * 100}%)` }}>
+              <span className="mark">MERZA FAMILY</span>
+              <span className="sub">
+                <span className="side left">product</span>
+                <span className="dot"></span>
+                <span className="side right">design</span>
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Worlds" />
+        <TweakSelect label="Palette" value={t.palette}
+          options={Object.keys(PALETTES).map(k => ({ value: k, label: PALETTES[k].label }))}
+          onChange={(v) => setTweak("palette", v)} />
+
+        <TweakSection label="Motion" />
+        <TweakRadio label="Split" value={t.splitMotion}
+          options={[
+            { value: "magnetic", label: "Magnetic" },
+            { value: "snap",     label: "Snap" },
+            { value: "off",      label: "Off" }
+          ]}
+          onChange={(v) => setTweak("splitMotion", v)} />
+
+        <TweakSection label="The Line" />
+        <TweakRadio label="Style" value={t.lineStyle}
+          options={[
+            { value: "gradient", label: "Gradient" },
+            { value: "subtle",   label: "Whisper" },
+            { value: "solid",    label: "Solid" }
+          ]}
+          onChange={(v) => setTweak("lineStyle", v)} />
+
+        <TweakSection label="Detail" />
+        <TweakToggle label="Decorative scenes" value={t.showDecor}
+          onChange={(v) => setTweak("showDecor", v)} />
+        <TweakToggle label="Wordmark" value={t.showWordmark}
+          onChange={(v) => setTweak("showWordmark", v)} />
+      </TweaksPanel>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+  </script>
+</body>
+</html>
