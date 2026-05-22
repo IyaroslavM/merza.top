@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Merza | Yaroslav &amp; Kseniya Merza — Product &amp; Design</title>
   <link rel="canonical" href="https://merza.top/" />
   <meta name="description" content="Merza family portfolio. Yaroslav Merza, Product Owner with 10+ yrs shipping digital products. Kseniya Merza, UX/UI Designer. Kyiv, Ukraine." />
@@ -37,7 +37,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=IBM+Plex+Mono:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
 
   <style>
     html,body{margin:0;background:#080C14;color:#fff}
@@ -400,6 +400,7 @@ function TweakRadio({ label, value, options, onChange }) {
   };
 
   const onPointerDown = (e) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
     setDragging(true);
     const v0 = segAt(e.clientX);
     if (v0 !== valueRef.current) onChange(v0);
@@ -412,9 +413,11 @@ function TweakRadio({ label, value, options, onChange }) {
       setDragging(false);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
     };
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
   };
 
   return (
@@ -489,7 +492,7 @@ function NetworkField({ accent = "#3770E8", count = 7 }) {
           vectorEffect="non-scaling-stroke" />
       ))}
       {nodes.map((n, i) => (
-        <g key={i} style={{ transformOrigin: `${n.x}% ${n.y}%`,
+        <g key={i} style={{ transformBox:"fill-box", transformOrigin:"center",
                             animation: `drift ${n.dur}s ${n.delay}s ease-in-out infinite` }}>
           <circle cx={n.x} cy={n.y} r={n.r * 2.2} fill="url(#nodeGlow)" opacity={n.o * 0.9} />
           <circle cx={n.x} cy={n.y} r={n.r * 0.35} fill={accent} opacity={n.o} />
@@ -513,29 +516,69 @@ function GridTexture({ accent = "#3770E8" }) {
 }
 
 function BlobField({ accent = "#B85EE0" }) {
+  const sp = [
+    { cx:84, cy:14, r:1.2, dur:"9.0s",  delay:"0s"    },
+    { cx:86, cy:11, r:0.7, dur:"12.5s", delay:"2.4s"  },
+    { cx:82, cy:12, r:0.4, dur:"10.5s", delay:"5.0s"  },
+    { cx:93, cy:36, r:0.9, dur:"13.8s", delay:"1.1s"  },
+    { cx:14, cy:28, r:0.6, dur:"11.2s", delay:"6.0s"  },
+    { cx:22, cy:76, r:1.0, dur:"9.8s",  delay:"3.5s"  },
+    { cx:55, cy:5,  r:0.5, dur:"12.0s", delay:"1.9s"  },
+    { cx:68, cy:91, r:0.8, dur:"8.5s",  delay:"5.5s"  },
+    { cx:38, cy:96, r:0.6, dur:"14.5s", delay:"7.2s"  },
+    { cx:7,  cy:46, r:0.7, dur:"10.8s", delay:"8.4s"  },
+    { cx:48, cy:50, r:0.4, dur:"16.0s", delay:"4.0s"  },
+    { cx:72, cy:62, r:0.5, dur:"10.4s", delay:"0.8s"  },
+  ];
+  const bs = { transformBox:"fill-box", transformOrigin:"center" };
   return (
     <svg className="blobs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <radialGradient id="blobA"><stop offset="0%" stopColor={accent} stopOpacity="0.18" /><stop offset="100%" stopColor={accent} stopOpacity="0" /></radialGradient>
-        <radialGradient id="blobB"><stop offset="0%" stopColor={accent} stopOpacity="0.12" /><stop offset="100%" stopColor={accent} stopOpacity="0" /></radialGradient>
+        <radialGradient id="blobA"><stop offset="0%" stopColor={accent} stopOpacity="0.22"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
+        <radialGradient id="blobB"><stop offset="0%" stopColor={accent} stopOpacity="0.16"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
+        <radialGradient id="blobC"><stop offset="0%" stopColor={accent} stopOpacity="0.11"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
+        <radialGradient id="blobGlow"><stop offset="0%" stopColor={accent} stopOpacity="0.09"/><stop offset="70%" stopColor={accent} stopOpacity="0.03"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
       </defs>
-      <ellipse cx="78" cy="22" rx="22" ry="14" fill="url(#blobA)" transform="rotate(18 78 22)"
-               style={{ animation: "float 14s ease-in-out infinite" }} />
-      <ellipse cx="88" cy="78" rx="14" ry="20" fill="url(#blobB)" transform="rotate(-12 88 78)"
-               style={{ animation: "float 18s 2s ease-in-out infinite reverse" }} />
-      <ellipse cx="18" cy="60" rx="12" ry="9" fill="url(#blobA)" transform="rotate(8 18 60)"
-               style={{ animation: "float 22s 1s ease-in-out infinite" }} />
 
+      {/* Ambient glow — slow pulse */}
+      <ellipse cx="58" cy="48" rx="38" ry="28" fill="url(#blobGlow)"
+        style={{ ...bs, animation:"blob-pulse 18s 0.5s ease-in-out infinite" }} />
+
+      {/* Primary blobs */}
+      <ellipse cx="78" cy="22" rx="26" ry="17" fill="url(#blobA)"
+        style={{ ...bs, animation:"blob-drift-a 14s ease-in-out infinite" }} />
+      <ellipse cx="88" cy="78" rx="17" ry="24" fill="url(#blobB)"
+        style={{ ...bs, animation:"blob-drift-b 18s 2s ease-in-out infinite" }} />
+      <ellipse cx="18" cy="60" rx="16" ry="11" fill="url(#blobA)"
+        style={{ ...bs, animation:"blob-drift-c 22s 1s ease-in-out infinite" }} />
+
+      {/* Secondary blobs */}
+      <ellipse cx="50" cy="10" rx="15" ry="9" fill="url(#blobC)"
+        style={{ ...bs, animation:"blob-drift-b 16s 3.5s ease-in-out infinite reverse" }} />
+      <ellipse cx="28" cy="90" rx="20" ry="11" fill="url(#blobC)"
+        style={{ ...bs, animation:"blob-drift-a 20s 5s ease-in-out infinite reverse" }} />
+      <ellipse cx="5"  cy="20" rx="10" ry="7"  fill="url(#blobC)"
+        style={{ ...bs, animation:"blob-drift-c 25s 2s ease-in-out infinite" }} />
+
+      {/* Wave lines — breathing opacity */}
       <path d="M -4 38 C 20 30, 38 46, 60 38 S 92 28, 110 36"
-            fill="none" stroke={accent} strokeWidth="0.18" opacity="0.32" vectorEffect="non-scaling-stroke" />
+        fill="none" stroke={accent} strokeWidth="0.18" vectorEffect="non-scaling-stroke"
+        style={{ animation:"path-shimmer 16s ease-in-out infinite" }} />
       <path d="M -4 58 C 22 52, 42 64, 64 58 S 96 50, 110 56"
-            fill="none" stroke={accent} strokeWidth="0.12" opacity="0.22" vectorEffect="non-scaling-stroke" />
+        fill="none" stroke={accent} strokeWidth="0.14" vectorEffect="non-scaling-stroke"
+        style={{ animation:"path-shimmer 20s 4s ease-in-out infinite" }} />
       <path d="M -4 78 C 18 72, 40 84, 62 76 S 92 70, 110 74"
-            fill="none" stroke={accent} strokeWidth="0.14" opacity="0.18" vectorEffect="non-scaling-stroke" />
+        fill="none" stroke={accent} strokeWidth="0.12" vectorEffect="non-scaling-stroke"
+        style={{ animation:"path-shimmer 24s 1.5s ease-in-out infinite" }} />
+      <path d="M -4 18 C 15 11, 36 24, 56 18 S 88 9, 110 15"
+        fill="none" stroke={accent} strokeWidth="0.09" vectorEffect="non-scaling-stroke"
+        style={{ animation:"path-shimmer 18s 6s ease-in-out infinite reverse" }} />
 
-      <circle cx="84" cy="14" r="1.2" fill={accent} opacity="0.22" />
-      <circle cx="86" cy="11" r="0.7" fill={accent} opacity="0.18" />
-      <circle cx="82" cy="12" r="0.4" fill={accent} opacity="0.14" />
+      {/* Sparkle dots */}
+      {sp.map((d,i) => (
+        <circle key={i} cx={d.cx} cy={d.cy} r={d.r} fill={accent}
+          style={{ animation:`sparkle ${d.dur} ${d.delay} ease-in-out infinite` }} />
+      ))}
     </svg>
   );
 }
@@ -569,7 +612,7 @@ const PEOPLE = {
     bio: "Digital product strategist with 10+ years turning complex business challenges into scalable digital products.",
     ghost: `{
   discipline: "product",
-  shipped:    [ BROCARD, DOC.ua, Crystal ],
+  shipped:    [BROCARD, DOC.ua, Crystal]
   thinking:   "systems",
   vision:     ∞
 }`,
@@ -580,7 +623,11 @@ const PEOPLE = {
       { co: "DOC.ua",                        role: "Product Owner",                           period: "2020 — 2022",        href: "https://doc.ua/" },
       { co: "MSD Ukraine",                   role: "Digital & Campaign Marketing Strategist", period: "2018 — 2020",        href: "https://www.msd.ua/" }
     ],
-    links: [{ label: "View LinkedIn", kind: "filled", href: "https://www.linkedin.com/in/iaroslavmerza/" }]
+    links: [
+      { label: "View Portfolio", kind: "filled",   action: "yportfolio" },
+      { label: "View LinkedIn",  kind: "outlined", href: "https://www.linkedin.com/in/iaroslavmerza/" },
+      { label: "merza@outlook.com", kind: "outlined", href: "mailto:merza@outlook.com" }
+    ]
   },
   k: {
     label: "Merza",
@@ -598,8 +645,9 @@ const PEOPLE = {
     ],
     projects: ["Research", "UX Flow", "Metrics"],
     links: [
+      { label: "View Portfolio", kind: "filled",   action: "portfolio" },
       { label: "View LinkedIn",  kind: "outlined", href: "https://www.linkedin.com/in/kseniya-merza-08754077/" },
-      { label: "View Portfolio", kind: "filled"   }
+      { label: "merza@outlook.com", kind: "outlined", href: "mailto:merza@outlook.com" }
     ]
   }
 };
@@ -650,33 +698,1724 @@ function useSplit({ axis, mode, hover, taken, motion }) {
   const [pos, setPos] = React.useState(0.5);
   const posRef = React.useRef(0.5);
   const targetRef = React.useRef(target);
+  const rafRef = React.useRef(null);
   targetRef.current = target;
 
   React.useEffect(() => {
-    let raf;
+    cancelAnimationFrame(rafRef.current);
     const tick = () => {
       const cur = posRef.current;
       const next = cur + (targetRef.current - cur) * 0.12;
       if (Math.abs(next - cur) > 0.0005) {
         posRef.current = next;
         setPos(next);
-        raf = requestAnimationFrame(tick);
-      } else {
+        rafRef.current = requestAnimationFrame(tick);
+      } else if (posRef.current !== targetRef.current) {
         posRef.current = targetRef.current;
         setPos(targetRef.current);
+        rafRef.current = null;
       }
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(rafRef.current); rafRef.current = null; };
   }, [target]);
 
   return pos;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// yaroslav-projects.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+
+const Y_PROJECTS = [
+  {
+    id: "brocard",
+    index: "01",
+    name: "BROCARD",
+    tagline: "From 0 to Ukraine's #1 beauty app",
+    type: "Mobile E-commerce · iOS & Android",
+    role: "Product Owner",
+    timeline: "6-month MVP · 2023 — Present",
+    tools: ["Jira", "Confluence", "Amplitude", "Figma"],
+    accent: "#E8DDB5",
+    accentLight: "rgba(232,221,181,0.06)",
+    problem: "BROCARD — Ukraine's largest beauty retailer — had zero mobile presence. All digital revenue flowed through a desktop website. The 18–25 demographic was churning to competitors with native apps. Leadership tasked the team with building a full-featured shopping app from scratch, with a 6-month window to App Store launch.",
+    research: [
+      { label: "Mobile revenue share", value: "60%",      note: "before launch — 100% desktop" },
+      { label: "18–25 segment",        value: "Churning", note: "moving to mobile-native competitors" },
+      { label: "MVP window",           value: "6 months", note: "App Store approval added 2 months" },
+      { label: "App Store ranking",    value: "Top 5",    note: "Shopping category · Ukraine" },
+    ],
+    insights: [
+      "Young users expected loyalty integration from day one — not as a later phase",
+      "AR try-on was a trust-builder, not just a novelty — it reduced returns and increased add-to-cart confidence",
+      "Gamification ('Shake for discount') drove 3–5% audience shift during promos with near-zero dev cost",
+    ],
+    decisions: [
+      { title: "Loyalty in v1",        desc: "Integrated digital loyalty card at launch rather than delaying to v2 — drove immediate repeat purchase behaviour." },
+      { title: "AR as conversion lever",desc: "Shipped virtual makeup try-on via ARKit/ARCore. Reduced product return rate and increased add-to-cart confidence." },
+      { title: "Gamification loop",    desc: "'Shake for discount' mechanic created viral sharing moments during promo events — built into the core feature set, not added on." },
+    ],
+    metrics: [
+      { value: "2M+",   label: "total installs",       delta: "up" },
+      { value: "400K+", label: "monthly active users", delta: "up" },
+      { value: "+20%",  label: "total sales growth",   delta: "up" },
+      { value: "+30%",  label: "18–25 segment growth", delta: "up" },
+    ],
+    stats: [
+      { label: "Installs",    value: "2,000,000+", sub: "total" },
+      { label: "MAU",         value: "400,000+",   sub: "monthly active" },
+      { label: "Sales",       value: "+20%",       sub: "total growth" },
+      { label: "Segment",     value: "+30%",       sub: "18-25 growth" },
+    ],
+  },
+  {
+    id: "crystal",
+    index: "02",
+    name: "Crystal Blockchain",
+    tagline: "Top of funnel, top of search",
+    type: "B2B SaaS · Blockchain Intelligence",
+    role: "Freelance Product Consultant",
+    timeline: "33 months · May 2022 — Feb 2025",
+    tools: ["Google Analytics", "Ahrefs", "SEMrush", "Hotjar"],
+    accent: "#5FAD6A",
+    accentLight: "rgba(95,173,106,0.06)",
+    problem: "Crystal Blockchain Analytics — trusted by financial institutions for on-chain intelligence — had strong product-market fit but a weak top of funnel. Organic traffic was flat year-over-year, lead quality was inconsistent, and key product pages were missing from Google's first page despite strong brand recognition in the blockchain space.",
+    research: [
+      { label: "Organic traffic",  value: "Flat YoY",   note: "despite growing brand presence" },
+      { label: "Target rankings",  value: "Page 2–3",   note: "missing high-intent search queries" },
+      { label: "Lead quality",     value: "Low",        note: "volume present, conversion inconsistent" },
+      { label: "Content gaps",     value: "Critical",   note: "competitors outranking on core terms" },
+    ],
+    insights: [
+      "High-intent B2B searchers were landing on unoptimised pages with no clear conversion path",
+      "Competitor content was deeper and more authoritative — Crystal ranked for brand only, not for category",
+      "Lead forms had friction for institutional buyers — procurement workflows weren't accommodated",
+    ],
+    decisions: [
+      { title: "Use-case-first content", desc: "Rebuilt core pages around high-intent keywords with depth. Shifted from feature pages to use-case landing pages targeting buyer jobs-to-be-done." },
+      { title: "Conversion path redesign",desc: "Redesigned lead capture to match institutional buyer journey — multi-step, lower friction, demo-first CTA above the fold." },
+      { title: "Technical SEO foundation",desc: "Addressed crawlability, Core Web Vitals, and structured data gaps that were suppressing indexation across key product pages." },
+    ],
+    metrics: [
+      { value: "+40%", label: "organic traffic",        delta: "up" },
+      { value: "+20%", label: "lead growth",            delta: "up" },
+      { value: "#1",   label: "key Google rankings",    delta: "up" },
+      { value: "Top 3",label: "for all target queries", delta: "up" },
+    ],
+    stats: [
+      { label: "Traffic",   value: "+40%",  sub: "organic growth" },
+      { label: "Leads",     value: "+20%",  sub: "lead growth" },
+      { label: "Rankings",  value: "#1",    sub: "key queries" },
+      { label: "Position",  value: "Top 3", sub: "target queries" },
+    ],
+  },
+  {
+    id: "docua",
+    index: "03",
+    name: "DOC.ua",
+    tagline: "Scaling Ukraine's health marketplace",
+    type: "Medical Marketplace · Web & Mobile",
+    role: "Product Owner",
+    timeline: "2 years · 2020 — 2022",
+    tools: ["Jira", "Mixpanel", "Hotjar", "Confluence"],
+    accent: "#7AB0FF",
+    accentLight: "rgba(122,176,255,0.06)",
+    problem: "DOC.ua — Ukraine's largest online medical appointment platform — was experiencing growing pains at scale. The core booking flow had accumulated UX debt, doctor profile pages had low conversion, and specialty search had poor relevance. As Product Owner, the mandate was to improve conversion and patient experience across web and mobile.",
+    research: [
+      { label: "Lifetime bookings",  value: "3M+",          note: "total appointments on platform" },
+      { label: "Drop-off point #1",  value: "Doctor profiles",note: "patients couldn't evaluate quality" },
+      { label: "Search relevance",   value: "Low",           note: "symptoms mapped to wrong specialties" },
+      { label: "Mobile experience",  value: "Mobile-first", note: "form UX causing high abandonment" },
+    ],
+    insights: [
+      "Doctor profile pages were the #1 drop-off — patients couldn't evaluate quality without digging through multiple screens",
+      "Specialty search had poor relevance — users typed symptoms, got specialty codes they didn't understand",
+      "Mobile booking was an afterthought — desktop-first forms caused abandonment on small screens",
+    ],
+    decisions: [
+      { title: "Doctor profile overhaul",      desc: "Rebuilt profiles with a social proof hierarchy — patient ratings, review count, and booking volume surfaced above the fold." },
+      { title: "Symptom-to-specialty mapping", desc: "Built a natural-language search layer mapping plain-language inputs to correct specialties — cut zero-result searches significantly." },
+      { title: "Mobile-first booking flow",    desc: "Redesigned appointment flow for thumb-first interaction — simplified date pickers, fewer steps, summary confirmation before commit." },
+    ],
+    metrics: [
+      { value: "3M+",  label: "appointments booked",       delta: "up" },
+      { value: "+28%", label: "booking conversion",         delta: "up" },
+      { value: "−40%", label: "zero-result searches",       delta: "down" },
+      { value: "#1",   label: "medical platform in Ukraine", delta: "up" },
+    ],
+    stats: [
+      { label: "Bookings",    value: "3M+",  sub: "total" },
+      { label: "Conversion",  value: "+28%", sub: "booking rate" },
+      { label: "Search",      value: "−40%", sub: "zero results" },
+      { label: "Position",    value: "#1",   sub: "Ukraine medtech" },
+    ],
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// portfolio.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PROJECTS = [
+  {
+    id: "sushi-master",
+    index: "01",
+    name: "Sushi Master",
+    tagline: "From scroll to checkout in under 3 minutes",
+    type: "E-commerce Redesign · Web & Mobile Web",
+    role: "Lead UX/UI Designer",
+    timeline: "12 weeks · 2022",
+    tools: ["Figma", "Hotjar", "Maze", "Miro"],
+    accent: "#C0392B",
+    accentLight: "rgba(192,57,43,0.08)",
+    problem: "sushi-master.ua — Ukraine's leading sushi delivery chain — had a 71% cart abandonment rate on mobile. A flat list of 200+ items with no hierarchy, a cart hidden behind four taps, and delivery time estimates revealed only after payment left users confused and calling support instead of ordering.",
+    research: [
+      { label: "Heatmap sessions", value: "1,200+", note: "Hotjar — 3 weeks of mobile traffic" },
+      { label: "Cart abandonment", value: "71%", note: "measured via funnel analytics" },
+      { label: "Support calls", value: "34%", note: "related to delivery ETA confusion" },
+      { label: "Avg time to order", value: "8.4 min", note: "vs 2.1 min on competitor" },
+    ],
+    insights: [
+      "Users scanned 3–5 items then left — undifferentiated list caused decision paralysis",
+      "Hidden cart created anxiety: people didn't know items were added and tapped repeatedly",
+      "ETA shown post-payment felt like bait-and-switch — 18% cancelled after seeing it",
+    ],
+    decisions: [
+      { title: "Visual category navigation", desc: "Replaced flat list with photo-first categories and a sticky filter row. Top items surfaced by order frequency." },
+      { title: "Persistent mini-cart", desc: "Cart count and total visible at all times. One-tap expand without leaving the menu page." },
+      { title: "ETA upfront", desc: "Delivery window shown on the first screen via geolocation — before any item is selected." },
+    ],
+    metrics: [
+      { value: "+52%", label: "cart completion rate", delta: "up" },
+      { value: "2.9 min", label: "avg time to order (was 8.4)", delta: "down" },
+      { value: "−41%", label: "support calls (ETA)", delta: "down" },
+      { value: "+29%", label: "avg order value", delta: "up" },
+    ],
+    palette: ["#FFF5F4","#FFD4CF","#C0392B","#922B21","#1A1A1F"],
+    screens: [
+      { label: "Menu Browse", color: "#C0392B" },
+      { label: "Item Detail", color: "#922B21" },
+      { label: "Checkout", color: "#FFD4CF" },
+    ]
+  },
+  {
+    id: "monopizza",
+    index: "02",
+    name: "Monopizza",
+    tagline: "Building the perfect order in one screen",
+    type: "Web Platform · Responsive",
+    role: "UX/UI Designer · UX Researcher",
+    timeline: "10 weeks · 2023",
+    tools: ["Figma", "FullStory", "Optimal Workshop", "Principle"],
+    accent: "#E8763A",
+    accentLight: "rgba(232,118,58,0.08)",
+    problem: "monopizza.com.ua was desktop-first in a world where 78% of orders came from phones. The restaurant locator demanded a full postcode before showing any menu, the pizza customizer ran across 9 sequential screens, and there was no combo logic — average order value sat at ₴180 against a ₴290 industry benchmark.",
+    research: [
+      { label: "Mobile traffic share", value: "78%", note: "GA — yet UI was desktop-first" },
+      { label: "Locator drop-off", value: "63%", note: "users quit before seeing the menu" },
+      { label: "Avg order value", value: "₴180", note: "vs ₴290 industry benchmark" },
+      { label: "Customizer exits", value: "49%", note: "abandoned mid-flow at step 5–7" },
+    ],
+    insights: [
+      "Requiring a postcode before showing the menu blocked intent — users came to browse, not commit",
+      "9-step customizer felt like a government form, not a food experience",
+      "No combo logic meant every extra item required a separate flow — upsell was structurally impossible",
+    ],
+    decisions: [
+      { title: "Geo-first, commit-later", desc: "Browser geolocation auto-selects the nearest location. Menu visible instantly; postcode only confirmed at checkout." },
+      { title: "Visual pizza builder", desc: "Collapsed 9 steps into a single interactive screen with a live pizza preview. Toppings toggle in place." },
+      { title: "Smart combo engine", desc: "After adding a pizza, a contextual combo card appears — one tap adds a drink + side at a bundled price." },
+    ],
+    metrics: [
+      { value: "₴264", label: "avg order value (was ₴180)", delta: "up" },
+      { value: "+67%", label: "menu-to-cart conversion", delta: "up" },
+      { value: "−72%", label: "customizer drop-off", delta: "down" },
+      { value: "4.7★", label: "post-launch App Store", delta: "up" },
+    ],
+    palette: ["#FFF8F3","#FFE0CC","#E8763A","#C05A1F","#1A1A1F"],
+    screens: [
+      { label: "Menu & Location", color: "#E8763A" },
+      { label: "Pizza Builder", color: "#C05A1F" },
+      { label: "Combo Upsell", color: "#FFE0CC" },
+    ]
+  },
+  {
+    id: "babysitter",
+    index: "03",
+    name: "Babysitter",
+    tagline: "Rebuilding trust in childcare",
+    type: "Mobile App · iOS & Android",
+    role: "Lead UX/UI Designer",
+    timeline: "14 weeks · 2021",
+    tools: ["Figma", "Maze", "Hotjar", "Principle"],
+    accent: "#B85EE0",
+    accentLight: "rgba(184,94,224,0.08)",
+    problem: "Parents couldn't find trusted babysitters quickly. The original onboarding took 11 steps, verification felt opaque, and 68% of users abandoned at the trust-confirmation screen — costing the platform thousands of potential bookings monthly.",
+    research: [
+      { label: "Interviews", value: "18 parents + 12 sitters", note: "moderated, 45 min each" },
+      { label: "Drop-off audit", value: "68%", note: "abandoned at step 7 of 11" },
+      { label: "SUS baseline", value: "41 / 100", note: "\"marginal\" usability" },
+      { label: "Top pain point", value: "\"How do I know they're safe?\"", note: "stated by 14 of 18 parents" },
+    ],
+    insights: [
+      "Trust signals were buried — background-check badges hidden behind 3 taps",
+      "Form fatigue: 11 fields on a single screen killed momentum",
+      "Sitters had no personality — photo + name only, no voice or story",
+    ],
+    decisions: [
+      { title: "Trust-first architecture", desc: "Moved verified badges and safety scores to the card level — visible before any tap." },
+      { title: "Progressive onboarding", desc: "Collapsed 11 steps into 3 contextual micro-flows triggered by intent, not sequence." },
+      { title: "Sitter story cards", desc: "60-second video intro replaced static photo — converted 2.3× better in A/B test." },
+    ],
+    metrics: [
+      { value: "+38%", label: "booking completion", delta: "up" },
+      { value: "−61%", label: "drop-off at trust step", delta: "down" },
+      { value: "79", label: "SUS score (was 41)", delta: "up" },
+      { value: "4.8★", label: "App Store rating", delta: "up" },
+    ],
+    palette: ["#F9F0FF","#EDD6F9","#B85EE0","#7E3DA0","#1A1A1F"],
+    screens: [
+      { label: "Onboarding", color: "#B85EE0" },
+      { label: "Sitter Card", color: "#7E3DA0" },
+      { label: "Booking Flow", color: "#EDD6F9" },
+    ],
+    concept: true
+  }
+];
+
+function MockPhone({ screens, accent }) {
+  const [active, setActive] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % screens.length), 2400);
+    return () => clearInterval(t);
+  }, [screens.length]);
+
+  return (
+    <div style={{
+      position: "relative", width: 180, height: 320, flexShrink: 0,
+      background: "#1A1A1F", borderRadius: 32, padding: 10,
+      boxShadow: `0 24px 64px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.06)`,
+    }}>
+      {/* notch */}
+      <div style={{ position:"absolute", top:10, left:"50%", transform:"translateX(-50%)",
+        width:48, height:5, background:"#000", borderRadius:99, zIndex:2 }} />
+      {/* screen */}
+      <div style={{ width:"100%", height:"100%", borderRadius:24, overflow:"hidden", position:"relative" }}>
+        {screens.map((s, i) => (
+          <div key={i} style={{
+            position:"absolute", inset:0,
+            background: i % 2 === 0 ? s.color : `linear-gradient(135deg, ${s.color} 0%, ${s.color}CC 100%)`,
+            opacity: active === i ? 1 : 0,
+            transition: "opacity 0.6s cubic-bezier(.4,0,.2,1)",
+            display: "flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+            gap: 8, padding: 16,
+          }}>
+            <div style={{ width:28, height:28, borderRadius:8, background:"rgba(255,255,255,0.2)" }} />
+            <div style={{ width:"70%", height:4, borderRadius:4, background:"rgba(255,255,255,0.3)" }} />
+            <div style={{ width:"50%", height:4, borderRadius:4, background:"rgba(255,255,255,0.2)" }} />
+            <div style={{ marginTop:8, width:"85%", height:48, borderRadius:12, background:"rgba(255,255,255,0.15)" }} />
+            <div style={{ width:"85%", height:28, borderRadius:8, background:"rgba(255,255,255,0.1)" }} />
+            <div style={{ marginTop:4, width:"60%", height:8, borderRadius:4, background:"rgba(255,255,255,0.25)" }} />
+            <div style={{
+              position:"absolute", bottom:16, left:"50%", transform:"translateX(-50%)",
+              fontSize:8, color:"rgba(255,255,255,0.6)", fontFamily:"'Cormorant Garamond',serif",
+              fontStyle:"italic", letterSpacing:".06em", whiteSpace:"nowrap"
+            }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+      {/* dots */}
+      <div style={{ position:"absolute", bottom:-20, left:0, right:0, display:"flex", justifyContent:"center", gap:5 }}>
+        {screens.map((_,i) => (
+          <div key={i} onClick={() => setActive(i)} style={{
+            width: active===i ? 14 : 5, height:5, borderRadius:99,
+            background: active===i ? accent : "rgba(0,0,0,0.18)",
+            transition:"all 0.3s ease", cursor:"pointer"
+          }}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({ value, label, delta }) {
+  return (
+    <div style={{
+      background:"#fff", borderRadius:16, padding:"20px 22px",
+      border:"1px solid rgba(0,0,0,0.06)",
+      boxShadow:"0 2px 12px rgba(0,0,0,0.04)",
+      transition:"transform .25s ease, box-shadow .25s ease",
+    }}
+    onMouseEnter={e => { e.currentTarget.style.transform="translateY(-3px)"; e.currentTarget.style.boxShadow="0 8px 28px rgba(0,0,0,0.09)"; }}
+    onMouseLeave={e => { e.currentTarget.style.transform=""; e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,0.04)"; }}
+    >
+      <div style={{
+        fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:"italic",
+        fontSize:30, fontWeight:600, color:"#1A1A1F", lineHeight:1, marginBottom:6
+      }}>{value}</div>
+      <div style={{
+        fontFamily:"'IBM Plex Mono',monospace", fontSize:10, letterSpacing:".14em",
+        textTransform:"uppercase", color:"#7A7A82", fontWeight:500
+      }}>{label}</div>
+    </div>
+  );
+}
+
+function SushiMasterPhone() {
+  const [active, setActive] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % 3), 2800);
+    return () => clearInterval(t);
+  }, []);
+  const R = "#C0392B";
+
+  const s = {
+    wrap:  { position:"absolute", inset:0, background:"#fff", display:"flex", flexDirection:"column", transition:"opacity .6s cubic-bezier(.4,0,.2,1)" },
+    bar:   { padding:"7px 9px 3px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #f0f0f0" },
+    time:  { fontSize:5.5, fontWeight:700, color:"#1A1A1F", fontFamily:"monospace" },
+    url:   { background:"#f3f3f3", margin:"3px 7px", borderRadius:5, padding:"2px 6px", textAlign:"center" },
+    urlTx: { fontSize:4.5, color:"#666", fontFamily:"monospace" },
+    hdr:   { padding:"4px 8px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #f0f0f0" },
+  };
+
+  const Bars = () => (
+    <div style={s.bar}>
+      <div style={s.time}>11:03</div>
+      <div style={{ display:"flex", gap:1.5, alignItems:"flex-end" }}>
+        {[3,4,5,6].map((h,i)=><div key={i} style={{ width:2, height:h, background:"#1A1A1F", borderRadius:1 }}/>)}
+        <div style={{ width:7, height:5, border:"1px solid #1A1A1F", borderRadius:1.5, marginLeft:2, position:"relative" }}>
+          <div style={{ position:"absolute", inset:"1px 1px 1px 1px", background:"#1A1A1F", borderRadius:1 }}/>
+        </div>
+      </div>
+    </div>
+  );
+
+  const UrlBar = () => (
+    <div style={s.url}><div style={s.urlTx}>kyiv.sushi-master.ua</div></div>
+  );
+
+  const SiteHeader = () => (
+    <div style={s.hdr}>
+      <div style={{ display:"flex", alignItems:"center", gap:3 }}>
+        <div style={{ width:13, height:13, borderRadius:"50%", background:"#FFD600", display:"flex", alignItems:"center", justifyContent:"center", fontSize:7, lineHeight:1 }}>🍣</div>
+        <div style={{ fontSize:5.5, fontWeight:800, color:R, letterSpacing:"-.1px", fontFamily:"sans-serif" }}>SUSHI MASTER</div>
+      </div>
+      <div style={{ display:"flex", alignItems:"center", gap:1.5 }}>
+        <div style={{ fontSize:6 }}>📍</div>
+        <div style={{ fontSize:5, fontWeight:700, color:"#1A1A1F" }}>Київ</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ position:"relative", width:180, height:320, flexShrink:0,
+      background:"#1A1A1F", borderRadius:32, padding:10,
+      boxShadow:`0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.06)` }}>
+      <div style={{ position:"absolute", top:10, left:"50%", transform:"translateX(-50%)",
+        width:48, height:5, background:"#000", borderRadius:99, zIndex:2 }} />
+
+      <div style={{ width:"100%", height:"100%", borderRadius:24, overflow:"hidden", position:"relative" }}>
+
+        {/* ── Screen 1: Menu Browse ── */}
+        <div style={{ ...s.wrap, opacity: active===0?1:0 }}>
+          <Bars/><UrlBar/><SiteHeader/>
+          {/* Categories */}
+          <div style={{ display:"flex", borderBottom:`2px solid #f0f0f0`, padding:"0 5px" }}>
+            {["Сети","Роли","Акції","Комбо","Новинки"].map((c,i)=>(
+              <div key={c} style={{ flex:1, textAlign:"center", padding:"4px 0", fontSize:4,
+                fontWeight:i===0?800:500, color:i===0?R:"#555",
+                borderBottom:i===0?`2px solid ${R}`:"2px solid transparent",
+                marginBottom:-2 }}>{c}</div>
+            ))}
+          </div>
+          {/* Search */}
+          <div style={{ margin:"4px 7px 3px", background:"#f7f7f7", borderRadius:6, padding:"3px 7px", display:"flex", alignItems:"center", gap:4 }}>
+            <div style={{ fontSize:6 }}>🔍</div>
+            <div style={{ fontSize:4.5, color:"#aaa" }}>Пошук</div>
+          </div>
+          {/* Grid */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4, padding:"0 7px", flex:1, overflow:"hidden" }}>
+            {[
+              { emoji:"🍣", name:"Філадельфія Класик", price:"349 грн", bg:"#FFF3E0" },
+              { emoji:"🍱", name:"Каліфорнія 🔥", price:"299 грн", bg:"#E8F5E9", badge:"-20%" },
+              { emoji:"🦐", name:"Дракон Ролл", price:"419 грн", bg:"#FCE4EC" },
+              { emoji:"🍤", name:"Темпура Мікс", price:"389 грн", bg:"#E3F2FD" },
+            ].map((item,i)=>(
+              <div key={i} style={{ borderRadius:7, border:"1px solid #efefef", overflow:"hidden", background:"#fafafa" }}>
+                <div style={{ height:38, background:item.bg, display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
+                  <div style={{ fontSize:18 }}>{item.emoji}</div>
+                  {item.badge && <div style={{ position:"absolute", top:3, right:3, background:R, color:"#fff", fontSize:4, fontWeight:800, padding:"1px 3px", borderRadius:3 }}>{item.badge}</div>}
+                </div>
+                <div style={{ padding:"3px 4px 4px" }}>
+                  <div style={{ fontSize:4, color:"#1A1A1F", fontWeight:600, lineHeight:1.2 }}>{item.name}</div>
+                  <div style={{ fontSize:5.5, color:R, fontWeight:800, marginTop:1 }}>{item.price}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Screen 2: Item Detail ── */}
+        <div style={{ ...s.wrap, opacity: active===1?1:0 }}>
+          <Bars/><UrlBar/>
+          {/* Back nav */}
+          <div style={{ padding:"5px 9px 4px", display:"flex", alignItems:"center", gap:5, borderBottom:"1px solid #f0f0f0" }}>
+            <div style={{ fontSize:10, color:R, lineHeight:1, marginTop:-1 }}>‹</div>
+            <div style={{ fontSize:5.5, fontWeight:800, color:"#1A1A1F", letterSpacing:".1em" }}>НАЗАД</div>
+          </div>
+          {/* Photo */}
+          <div style={{ position:"relative", margin:"6px 8px 0", borderRadius:9, overflow:"hidden", height:75,
+            background:"linear-gradient(150deg,#2a2a2a 0%,#111 100%)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <div style={{ fontSize:30, letterSpacing:-2, filter:"drop-shadow(0 2px 6px rgba(0,0,0,.5))" }}>🍣🍱🦐</div>
+            <div style={{ position:"absolute", top:5, right:5, display:"flex", flexDirection:"column", gap:2, alignItems:"flex-end" }}>
+              <div style={{ background:R, color:"#fff", fontSize:4.5, fontWeight:800, padding:"1.5px 5px", borderRadius:3 }}>Знижка -35%</div>
+              <div style={{ background:"#FFD600", color:"#1A1A1F", fontSize:4.5, fontWeight:800, padding:"1.5px 5px", borderRadius:3 }}>Новинка 🔥</div>
+            </div>
+          </div>
+          {/* Info */}
+          <div style={{ padding:"5px 10px 0" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+              <div style={{ fontSize:4.5, color:"#999" }}>Вага: 1030 г &nbsp;<span style={{ color:R }}>ℹ</span></div>
+              <div style={{ textAlign:"right" }}>
+                <div style={{ fontSize:4.5, color:"#bbb", textDecoration:"line-through" }}>996 грн</div>
+                <div style={{ fontSize:10, fontWeight:900, color:"#1A1A1F", lineHeight:1.1 }}>649 грн</div>
+              </div>
+            </div>
+            <div style={{ fontSize:8, fontWeight:900, color:"#1A1A1F", marginTop:5, letterSpacing:"-.01em" }}>СЕТ ТИЖНЯ</div>
+            <div style={{ fontSize:4, color:"#888", marginTop:3, lineHeight:1.4 }}>32 шт · Лосось, тунець, вугор, авокадо, вершковий сир</div>
+          </div>
+          {/* CTA */}
+          <div style={{ marginTop:"auto", padding:"6px 8px 8px", display:"flex", gap:5 }}>
+            <div style={{ flex:1, background:R, borderRadius:8, padding:"6px 0", textAlign:"center", cursor:"pointer" }}>
+              <div style={{ fontSize:5.5, fontWeight:900, color:"#fff", letterSpacing:".08em" }}>В КОШИК</div>
+            </div>
+            <div style={{ width:24, height:24, border:"1.5px solid #e0e0e0", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11 }}>🛒</div>
+          </div>
+        </div>
+
+        {/* ── Screen 3: Cart ── */}
+        <div style={{ ...s.wrap, opacity: active===2?1:0 }}>
+          <Bars/>
+          <div style={{ padding:"6px 10px 5px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #f0f0f0" }}>
+            <div style={{ fontSize:7, fontWeight:900, color:"#1A1A1F", display:"flex", alignItems:"center", gap:4 }}>
+              <span style={{ fontSize:9 }}>🛒</span> Кошик
+            </div>
+            <div style={{ background:R, color:"#fff", fontSize:4, fontWeight:700, padding:"1.5px 6px", borderRadius:99 }}>2 товари</div>
+          </div>
+          <div style={{ padding:"5px 8px", display:"flex", flexDirection:"column", gap:4, overflow:"hidden" }}>
+            {[
+              { emoji:"🍣", name:"Сет Тижня", sub:"32 шт", price:"649 грн", qty:1 },
+              { emoji:"🍱", name:"Філадельфія", sub:"8 шт · ×2", price:"698 грн", qty:2 },
+            ].map((item,i)=>(
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:5, padding:"4px 5px", borderRadius:8, background:"#fafafa", border:"1px solid #f0f0f0" }}>
+                <div style={{ width:24, height:24, borderRadius:6, background:i===0?"#FFF3E0":"#E8F5E9", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:13 }}>{item.emoji}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:4.5, fontWeight:700, color:"#1A1A1F" }}>{item.name}</div>
+                  <div style={{ fontSize:3.5, color:"#999" }}>{item.sub}</div>
+                </div>
+                <div style={{ textAlign:"right" }}>
+                  <div style={{ fontSize:5.5, fontWeight:800, color:R }}>{item.price}</div>
+                  <div style={{ display:"flex", alignItems:"center", gap:2, marginTop:1.5, justifyContent:"flex-end" }}>
+                    <div style={{ width:11, height:11, borderRadius:3, border:"1px solid #ddd", display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, color:"#777", lineHeight:1 }}>−</div>
+                    <div style={{ fontSize:5, fontWeight:800, color:"#1A1A1F", minWidth:8, textAlign:"center" }}>{item.qty}</div>
+                    <div style={{ width:11, height:11, borderRadius:3, background:R, display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, color:"#fff", lineHeight:1 }}>+</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ margin:"3px 8px", padding:"5px 7px", borderRadius:8, background:"#FFF8F7", border:`1px solid ${R}25` }}>
+            <div style={{ fontSize:3.5, color:"#aaa", letterSpacing:".1em", textTransform:"uppercase", marginBottom:2 }}>Доставка</div>
+            <div style={{ fontSize:4.5, color:"#1A1A1F", fontWeight:600 }}>🚴 30–45 хв · Київ, Хрещатик</div>
+          </div>
+          <div style={{ margin:"3px 8px 0", padding:"4px 7px", borderRadius:8, border:"1px dashed #e0e0e0", display:"flex", alignItems:"center", gap:4 }}>
+            <div style={{ fontSize:8 }}>🎁</div>
+            <div style={{ fontSize:4, color:"#aaa" }}>Промокод або бонуси</div>
+          </div>
+          <div style={{ marginTop:"auto", padding:"5px 8px 8px", borderTop:"1px solid #f0f0f0" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+              <div style={{ fontSize:5, color:"#999" }}>Разом:</div>
+              <div style={{ fontSize:9, fontWeight:900, color:"#1A1A1F" }}>1347 грн</div>
+            </div>
+            <div style={{ background:R, borderRadius:8, padding:"7px 0", textAlign:"center", cursor:"pointer" }}>
+              <div style={{ fontSize:5.5, fontWeight:900, color:"#fff", letterSpacing:".06em" }}>ОФОРМИТИ ЗАМОВЛЕННЯ</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {/* Dots */}
+      <div style={{ position:"absolute", bottom:-20, left:0, right:0, display:"flex", justifyContent:"center", gap:5 }}>
+        {[0,1,2].map(i=>(
+          <div key={i} onClick={()=>setActive(i)} style={{
+            width: active===i?14:5, height:5, borderRadius:99,
+            background: active===i?R:"rgba(0,0,0,0.18)",
+            transition:"all 0.3s ease", cursor:"pointer"
+          }}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MonopizzaPhone() {
+  const [active, setActive] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % 3), 2800);
+    return () => clearInterval(t);
+  }, []);
+  const O = "#E8763A";
+
+  const s = {
+    wrap: { position:"absolute", inset:0, background:"#fff", display:"flex", flexDirection:"column", transition:"opacity .6s cubic-bezier(.4,0,.2,1)" },
+  };
+
+  const Bars = () => (
+    <div style={{ padding:"7px 9px 3px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #f5f5f5" }}>
+      <div style={{ fontSize:5.5, fontWeight:700, color:"#1A1A1F", fontFamily:"monospace" }}>11:03</div>
+      <div style={{ display:"flex", gap:1.5, alignItems:"flex-end" }}>
+        {[3,4,5,6].map((h,i)=><div key={i} style={{ width:2, height:h, background:"#1A1A1F", borderRadius:1 }}/>)}
+        <div style={{ width:7, height:5, border:"1px solid #1A1A1F", borderRadius:1.5, marginLeft:2, position:"relative" }}>
+          <div style={{ position:"absolute", inset:"1px 1px 1px 1px", background:"#1A1A1F", borderRadius:1 }}/>
+        </div>
+      </div>
+    </div>
+  );
+
+  const UrlBar = () => (
+    <div style={{ background:"#f3f3f3", margin:"3px 7px", borderRadius:5, padding:"2px 6px", textAlign:"center" }}>
+      <div style={{ fontSize:4.5, color:"#666", fontFamily:"monospace" }}>monopizza.com.ua</div>
+    </div>
+  );
+
+  const SiteHeader = () => (
+    <div style={{ padding:"4px 8px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #f0f0f0" }}>
+      <div style={{ display:"flex", alignItems:"center", gap:3 }}>
+        <div style={{ width:14, height:14, borderRadius:4, background:O, display:"flex", alignItems:"center", justifyContent:"center", fontSize:8 }}>🍕</div>
+        <div style={{ fontSize:6, fontWeight:900, color:"#1A1A1F", letterSpacing:"-.1px", fontFamily:"sans-serif" }}>mono<span style={{ color:O }}>pizza</span></div>
+      </div>
+      <div style={{ display:"flex", alignItems:"center", gap:1.5, background:"#FFF3ED", borderRadius:4, padding:"2px 5px" }}>
+        <div style={{ fontSize:5 }}>📍</div>
+        <div style={{ fontSize:4.5, fontWeight:700, color:O }}>Київ · авто</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ position:"relative", width:180, height:320, flexShrink:0,
+      background:"#1A1A1F", borderRadius:32, padding:10,
+      boxShadow:`0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.06)` }}>
+      <div style={{ position:"absolute", top:10, left:"50%", transform:"translateX(-50%)",
+        width:48, height:5, background:"#000", borderRadius:99, zIndex:2 }} />
+
+      <div style={{ width:"100%", height:"100%", borderRadius:24, overflow:"hidden", position:"relative" }}>
+
+        {/* ── Screen 1: Menu & Location ── */}
+        <div style={{ ...s.wrap, opacity: active===0?1:0 }}>
+          <Bars/><UrlBar/><SiteHeader/>
+          {/* Category tabs */}
+          <div style={{ display:"flex", borderBottom:"2px solid #f0f0f0", padding:"0 5px" }}>
+            {["Піца","Бургери","Напої","Десерти"].map((c,i)=>(
+              <div key={c} style={{ flex:1, textAlign:"center", padding:"4px 0", fontSize:4,
+                fontWeight:i===0?900:500, color:i===0?O:"#777",
+                borderBottom:i===0?`2px solid ${O}`:"2px solid transparent", marginBottom:-2 }}>{c}</div>
+            ))}
+          </div>
+          {/* Promo banner */}
+          <div style={{ margin:"5px 7px", borderRadius:8, background:`linear-gradient(110deg,${O} 0%,#C05A1F 100%)`, padding:"7px 9px", display:"flex", alignItems:"center", justifyContent:"space-between", overflow:"hidden", position:"relative" }}>
+            <div>
+              <div style={{ fontSize:4, color:"rgba(255,255,255,.8)", letterSpacing:".1em", textTransform:"uppercase" }}>Акція тижня</div>
+              <div style={{ fontSize:7.5, fontWeight:900, color:"#fff", marginTop:1 }}>2 піци = −30%</div>
+              <div style={{ fontSize:3.5, color:"rgba(255,255,255,.7)", marginTop:2 }}>до 23:59 · промокод AUTO30</div>
+            </div>
+            <div style={{ fontSize:32, opacity:.9 }}>🍕</div>
+          </div>
+          {/* Pizza grid */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4, padding:"0 7px", flex:1, overflow:"hidden" }}>
+            {[
+              { emoji:"🍕", name:"Маргарита", price:"249 грн", sub:"25 / 30 / 35 см", bg:"#FFF3ED" },
+              { emoji:"🔥", name:"Пепероні", price:"299 грн", sub:"25 / 30 / 35 см", bg:"#FFF3E0", badge:"ХІТ" },
+              { emoji:"🌿", name:"4 Сири", price:"319 грн", sub:"25 / 30 / 35 см", bg:"#F3FBF0" },
+              { emoji:"🥩", name:"М'ясна", price:"329 грн", sub:"25 / 30 / 35 см", bg:"#FBF0F0" },
+            ].map((item,i)=>(
+              <div key={i} style={{ borderRadius:7, border:"1px solid #efefef", overflow:"hidden", background:"#fafafa" }}>
+                <div style={{ height:36, background:item.bg, display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
+                  <div style={{ fontSize:20 }}>{item.emoji}</div>
+                  {item.badge && <div style={{ position:"absolute", top:3, right:3, background:O, color:"#fff", fontSize:4, fontWeight:800, padding:"1px 3px", borderRadius:3 }}>{item.badge}</div>}
+                </div>
+                <div style={{ padding:"3px 4px 4px" }}>
+                  <div style={{ fontSize:4, color:"#1A1A1F", fontWeight:700 }}>{item.name}</div>
+                  <div style={{ fontSize:3.5, color:"#aaa", marginTop:1 }}>{item.sub}</div>
+                  <div style={{ fontSize:5.5, color:O, fontWeight:900, marginTop:2 }}>{item.price}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Screen 2: Pizza Builder ── */}
+        <div style={{ ...s.wrap, opacity: active===1?1:0 }}>
+          <Bars/><UrlBar/>
+          <div style={{ padding:"5px 9px 4px", display:"flex", alignItems:"center", gap:5, borderBottom:"1px solid #f0f0f0" }}>
+            <div style={{ fontSize:10, color:O, lineHeight:1, marginTop:-1 }}>‹</div>
+            <div style={{ fontSize:5.5, fontWeight:800, color:"#1A1A1F", letterSpacing:".08em" }}>НАЛАШТУЙ ПІЦУ</div>
+          </div>
+          {/* Live pizza preview */}
+          <div style={{ margin:"6px auto 0", width:80, height:80, borderRadius:"50%",
+            background:"radial-gradient(circle at 40% 35%, #F5C842 0%, #E8A020 60%, #C07010 100%)",
+            display:"flex", alignItems:"center", justifyContent:"center", position:"relative",
+            boxShadow:`0 4px 16px rgba(232,118,58,.35)` }}>
+            <div style={{ fontSize:30, filter:"drop-shadow(0 1px 3px rgba(0,0,0,.3))" }}>🍕</div>
+            <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:`2px solid ${O}40` }}/>
+          </div>
+          <div style={{ textAlign:"center", fontSize:7, fontWeight:900, color:"#1A1A1F", marginTop:5, letterSpacing:"-.01em" }}>Маргарита</div>
+          {/* Size selector */}
+          <div style={{ padding:"5px 9px 0" }}>
+            <div style={{ fontSize:4, color:"#aaa", letterSpacing:".1em", textTransform:"uppercase", marginBottom:4 }}>Розмір</div>
+            <div style={{ display:"flex", gap:4 }}>
+              {[{s:"25 см",p:"249 грн"},{s:"30 см",p:"289 грн",on:true},{s:"35 см",p:"329 грн"}].map((sz,i)=>(
+                <div key={i} style={{ flex:1, borderRadius:7, border:`1.5px solid ${sz.on?O:"#e8e8e8"}`,
+                  background:sz.on?`${O}12`:"#fafafa", padding:"4px 2px", textAlign:"center" }}>
+                  <div style={{ fontSize:5, fontWeight:sz.on?800:500, color:sz.on?O:"#555" }}>{sz.s}</div>
+                  <div style={{ fontSize:4, color:sz.on?O:"#aaa", marginTop:1, fontWeight:sz.on?700:400 }}>{sz.p}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Toppings */}
+          <div style={{ padding:"5px 9px 0" }}>
+            <div style={{ fontSize:4, color:"#aaa", letterSpacing:".1em", textTransform:"uppercase", marginBottom:4 }}>Топінги</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3 }}>
+              {[
+                { name:"Моцарела", on:true },
+                { name:"Томатний соус", on:true },
+                { name:"Базилік", on:false },
+                { name:"Орегано", on:true },
+                { name:"Пармезан", on:false },
+                { name:"Гриби", on:false },
+              ].map((tp,i)=>(
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:3, padding:"2px 0" }}>
+                  <div style={{ width:9, height:9, borderRadius:3, border:`1.5px solid ${tp.on?O:"#ddd"}`,
+                    background:tp.on?O:"transparent", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    {tp.on && <div style={{ fontSize:5, color:"#fff", lineHeight:1 }}>✓</div>}
+                  </div>
+                  <div style={{ fontSize:4, color:tp.on?"#1A1A1F":"#bbb", fontWeight:tp.on?600:400 }}>{tp.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* CTA */}
+          <div style={{ marginTop:"auto", padding:"5px 8px 8px", display:"flex", alignItems:"center", justifyContent:"space-between", borderTop:"1px solid #f0f0f0" }}>
+            <div>
+              <div style={{ fontSize:4, color:"#aaa" }}>Ціна:</div>
+              <div style={{ fontSize:9, fontWeight:900, color:"#1A1A1F" }}>289 грн</div>
+            </div>
+            <div style={{ background:O, borderRadius:8, padding:"6px 12px", cursor:"pointer" }}>
+              <div style={{ fontSize:5.5, fontWeight:900, color:"#fff", letterSpacing:".06em" }}>В КОШИК</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Screen 3: Combo Upsell ── */}
+        <div style={{ ...s.wrap, opacity: active===2?1:0 }}>
+          <Bars/>
+          {/* Header */}
+          <div style={{ background:`linear-gradient(110deg,${O} 0%,#C05A1F 100%)`, padding:"8px 10px 7px" }}>
+            <div style={{ fontSize:4.5, color:"rgba(255,255,255,.8)", letterSpacing:".08em", textTransform:"uppercase" }}>Чудовий вибір!</div>
+            <div style={{ fontSize:7.5, fontWeight:900, color:"#fff", marginTop:1 }}>🔥 Доповни до комбо</div>
+          </div>
+          {/* Added item */}
+          <div style={{ margin:"6px 8px 4px", padding:"5px 7px", borderRadius:8, background:"#fafafa", border:"1px solid #f0f0f0", display:"flex", alignItems:"center", gap:5 }}>
+            <div style={{ fontSize:16 }}>🍕</div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:5, fontWeight:700, color:"#1A1A1F" }}>Маргарита 30 см</div>
+              <div style={{ fontSize:4, color:"#aaa" }}>додано до кошика</div>
+            </div>
+            <div style={{ fontSize:6.5, fontWeight:800, color:O }}>289 грн</div>
+          </div>
+          {/* Combo card */}
+          <div style={{ margin:"0 8px", padding:"7px 8px", borderRadius:9, border:`2px solid ${O}`, background:`${O}08` }}>
+            <div style={{ fontSize:4.5, fontWeight:800, color:O, letterSpacing:".06em", textTransform:"uppercase", marginBottom:6 }}>Комбо пропозиція</div>
+            <div style={{ display:"flex", gap:3, alignItems:"center", marginBottom:6 }}>
+              {[{ e:"🥤", n:"Cola 0.5 л" }, { e:"➕", n:null }, { e:"🍟", n:"Картопля фрі" }].map((x,i)=>(
+                x.n
+                  ? <div key={i} style={{ flex:1, borderRadius:7, background:"#fff", border:"1px solid #f0f0f0", padding:"4px 3px", textAlign:"center" }}>
+                      <div style={{ fontSize:14 }}>{x.e}</div>
+                      <div style={{ fontSize:3.5, color:"#555", marginTop:1 }}>{x.n}</div>
+                    </div>
+                  : <div key={i} style={{ fontSize:8, color:O, fontWeight:900 }}>{x.e}</div>
+              ))}
+            </div>
+            <div style={{ display:"flex", alignItems:"baseline", gap:5 }}>
+              <div style={{ fontSize:4, color:"#bbb", textDecoration:"line-through" }}>140 грн окремо</div>
+              <div style={{ fontSize:8, fontWeight:900, color:O }}>89 грн</div>
+              <div style={{ background:O, color:"#fff", fontSize:3.5, fontWeight:800, padding:"1px 4px", borderRadius:3 }}>−36%</div>
+            </div>
+          </div>
+          {/* Buttons */}
+          <div style={{ padding:"5px 8px", display:"flex", flexDirection:"column", gap:4, marginTop:"auto" }}>
+            <div style={{ background:O, borderRadius:8, padding:"7px 0", textAlign:"center", cursor:"pointer" }}>
+              <div style={{ fontSize:5.5, fontWeight:900, color:"#fff", letterSpacing:".06em" }}>ДОДАТИ КОМБО · 89 грн</div>
+            </div>
+            <div style={{ textAlign:"center", padding:"3px 0", cursor:"pointer" }}>
+              <div style={{ fontSize:4.5, color:"#bbb", textDecoration:"underline" }}>Ні, дякую</div>
+            </div>
+          </div>
+          {/* Mini total */}
+          <div style={{ padding:"0 8px 8px", display:"flex", justifyContent:"space-between", alignItems:"center", borderTop:"1px solid #f5f5f5", paddingTop:5 }}>
+            <div style={{ fontSize:4, color:"#aaa" }}>Кошик · 1 товар</div>
+            <div style={{ fontSize:6.5, fontWeight:900, color:"#1A1A1F" }}>289 грн</div>
+          </div>
+        </div>
+
+      </div>
+      {/* Dots */}
+      <div style={{ position:"absolute", bottom:-20, left:0, right:0, display:"flex", justifyContent:"center", gap:5 }}>
+        {[0,1,2].map(i=>(
+          <div key={i} onClick={()=>setActive(i)} style={{
+            width: active===i?14:5, height:5, borderRadius:99,
+            background: active===i?O:"rgba(0,0,0,0.18)",
+            transition:"all 0.3s ease", cursor:"pointer"
+          }}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BabysitterPhone() {
+  const [active, setActive] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % 3), 2800);
+    return () => clearInterval(t);
+  }, []);
+  const P = "#B85EE0";
+  const D = "#7E3DA0";
+
+  const s = {
+    wrap: { position:"absolute", inset:0, background:"#fff", display:"flex", flexDirection:"column", transition:"opacity .6s cubic-bezier(.4,0,.2,1)" },
+  };
+
+  const Bars = () => (
+    <div style={{ padding:"7px 9px 3px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #f5f5f5" }}>
+      <div style={{ fontSize:5.5, fontWeight:700, color:"#1A1A1F", fontFamily:"monospace" }}>11:03</div>
+      <div style={{ display:"flex", gap:1.5, alignItems:"flex-end" }}>
+        {[3,4,5,6].map((h,i)=><div key={i} style={{ width:2, height:h, background:"#1A1A1F", borderRadius:1 }}/>)}
+        <div style={{ width:7, height:5, border:"1px solid #1A1A1F", borderRadius:1.5, marginLeft:2, position:"relative" }}>
+          <div style={{ position:"absolute", inset:"1px 1px 1px 1px", background:"#1A1A1F", borderRadius:1 }}/>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ position:"relative", width:180, height:320, flexShrink:0,
+      background:"#1A1A1F", borderRadius:32, padding:10,
+      boxShadow:`0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.06)` }}>
+      <div style={{ position:"absolute", top:10, left:"50%", transform:"translateX(-50%)",
+        width:48, height:5, background:"#000", borderRadius:99, zIndex:2 }} />
+
+      <div style={{ width:"100%", height:"100%", borderRadius:24, overflow:"hidden", position:"relative" }}>
+
+        {/* ── Screen 1: Onboarding / Trust-first ── */}
+        <div style={{ ...s.wrap, opacity: active===0?1:0, background:`linear-gradient(160deg,#F9F0FF 0%,#EDD6F9 100%)` }}>
+          <Bars/>
+          <div style={{ padding:"10px 12px 0", display:"flex", flexDirection:"column", alignItems:"center", flex:1 }}>
+            {/* Logo */}
+            <div style={{ width:36, height:36, borderRadius:12, background:`linear-gradient(135deg,${P},${D})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, marginBottom:8, boxShadow:`0 4px 14px ${P}55` }}>👶</div>
+            <div style={{ fontSize:8, fontWeight:900, color:"#1A1A1F", letterSpacing:"-.01em", marginBottom:3 }}>Babysitter</div>
+            <div style={{ fontSize:4.5, color:"#7A7A82", textAlign:"center", lineHeight:1.5, maxWidth:"22ch", marginBottom:12 }}>Знайди перевірену няню за 3 хвилини</div>
+            {/* Trust badges — visible before any tap */}
+            <div style={{ width:"100%", display:"flex", flexDirection:"column", gap:5, marginBottom:12 }}>
+              {[
+                { icon:"✅", label:"Background check", sub:"Поліцейська перевірка" },
+                { icon:"⭐", label:"Verified reviews", sub:"Тільки реальні батьки" },
+                { icon:"🛡️", label:"Insurance included", sub:"Захист на кожне замовлення" },
+              ].map((b,i)=>(
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:7, background:"rgba(255,255,255,.75)", borderRadius:9, padding:"5px 8px", border:`1px solid ${P}25` }}>
+                  <div style={{ fontSize:11 }}>{b.icon}</div>
+                  <div>
+                    <div style={{ fontSize:5, fontWeight:800, color:"#1A1A1F" }}>{b.label}</div>
+                    <div style={{ fontSize:3.5, color:"#7A7A82", marginTop:1 }}>{b.sub}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ width:"100%", background:P, borderRadius:9, padding:"7px 0", textAlign:"center" }}>
+              <div style={{ fontSize:6, fontWeight:900, color:"#fff", letterSpacing:".05em" }}>ЗНАЙТИ НЯНЮ</div>
+            </div>
+            <div style={{ fontSize:4, color:"#aaa", marginTop:6 }}>Вже є акаунт? <span style={{ color:P, fontWeight:700 }}>Увійти</span></div>
+          </div>
+        </div>
+
+        {/* ── Screen 2: Sitter Profile Card ── */}
+        <div style={{ ...s.wrap, opacity: active===1?1:0 }}>
+          <Bars/>
+          <div style={{ padding:"5px 9px 4px", display:"flex", alignItems:"center", gap:5, borderBottom:"1px solid #f0f0f0" }}>
+            <div style={{ fontSize:10, color:P, lineHeight:1, marginTop:-1 }}>‹</div>
+            <div style={{ fontSize:5.5, fontWeight:800, color:"#1A1A1F", letterSpacing:".06em" }}>НЯНЯ ДОСТУПНА</div>
+            <div style={{ marginLeft:"auto", background:`${P}18`, borderRadius:99, padding:"2px 7px" }}>
+              <div style={{ fontSize:4, color:P, fontWeight:700 }}>поруч · 0.8 км</div>
+            </div>
+          </div>
+          {/* Profile */}
+          <div style={{ padding:"8px 10px 0" }}>
+            <div style={{ display:"flex", gap:8, alignItems:"flex-start", marginBottom:8 }}>
+              <div style={{ position:"relative", flexShrink:0 }}>
+                <div style={{ width:44, height:44, borderRadius:14, background:`linear-gradient(135deg,${P}66,${D}66)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>👩</div>
+                <div style={{ position:"absolute", bottom:-2, right:-2, background:"#22C55E", borderRadius:99, width:10, height:10, border:"2px solid #fff", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <div style={{ fontSize:5, color:"#fff", lineHeight:1 }}>✓</div>
+                </div>
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:7.5, fontWeight:900, color:"#1A1A1F" }}>Олена К.</div>
+                <div style={{ display:"flex", alignItems:"center", gap:3, marginTop:1 }}>
+                  <div style={{ fontSize:5, color:"#F59E0B" }}>★★★★★</div>
+                  <div style={{ fontSize:4, color:"#7A7A82" }}>4.9 · 87 відгуків</div>
+                </div>
+                <div style={{ fontSize:4, color:"#22C55E", fontWeight:700, marginTop:2 }}>✅ Перевірена поліцією</div>
+              </div>
+              <div style={{ textAlign:"right" }}>
+                <div style={{ fontSize:7, fontWeight:900, color:P }}>180 грн</div>
+                <div style={{ fontSize:3.5, color:"#aaa" }}>/година</div>
+              </div>
+            </div>
+            {/* Video preview */}
+            <div style={{ borderRadius:10, overflow:"hidden", height:60, background:`linear-gradient(135deg,${D} 0%,${P} 100%)`, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:7, position:"relative" }}>
+              <div style={{ width:22, height:22, borderRadius:"50%", background:"rgba(255,255,255,.9)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <div style={{ fontSize:9, marginLeft:1 }}>▶</div>
+              </div>
+              <div style={{ position:"absolute", bottom:5, left:9, fontSize:4, color:"rgba(255,255,255,.85)", fontWeight:600 }}>60-секундне відео · Олена розповідає про себе</div>
+            </div>
+            {/* Tags */}
+            <div style={{ display:"flex", gap:3, flexWrap:"wrap", marginBottom:8 }}>
+              {["0–3 роки","Перша допомога","Англійська","Плавання"].map(tag=>(
+                <div key={tag} style={{ fontSize:3.5, color:D, background:`${P}14`, borderRadius:99, padding:"2px 5px", fontWeight:600 }}>{tag}</div>
+              ))}
+            </div>
+            {/* Actions */}
+            <div style={{ display:"flex", gap:5 }}>
+              <div style={{ flex:1, background:P, borderRadius:8, padding:"6px 0", textAlign:"center" }}>
+                <div style={{ fontSize:5.5, fontWeight:900, color:"#fff" }}>ЗАБРОНЮВАТИ</div>
+              </div>
+              <div style={{ width:28, height:28, border:`1.5px solid ${P}40`, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>💬</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Screen 3: Booking Flow ── */}
+        <div style={{ ...s.wrap, opacity: active===2?1:0 }}>
+          <Bars/>
+          <div style={{ padding:"5px 9px 4px", display:"flex", alignItems:"center", gap:5, borderBottom:"1px solid #f0f0f0" }}>
+            <div style={{ fontSize:10, color:P, lineHeight:1, marginTop:-1 }}>‹</div>
+            <div style={{ fontSize:5.5, fontWeight:800, color:"#1A1A1F" }}>БРОНЮВАННЯ</div>
+          </div>
+          <div style={{ padding:"6px 9px 0", display:"flex", flexDirection:"column", gap:6, flex:1 }}>
+            {/* Mini profile */}
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"4px 6px", background:"#fafafa", borderRadius:8, border:"1px solid #f0f0f0" }}>
+              <div style={{ fontSize:14 }}>👩</div>
+              <div>
+                <div style={{ fontSize:5, fontWeight:800, color:"#1A1A1F" }}>Олена К.</div>
+                <div style={{ fontSize:3.5, color:"#22C55E", fontWeight:700 }}>✅ Перевірена · ★ 4.9</div>
+              </div>
+              <div style={{ marginLeft:"auto", fontSize:5.5, fontWeight:900, color:P }}>180 грн/год</div>
+            </div>
+            {/* Date */}
+            <div>
+              <div style={{ fontSize:4, color:"#aaa", letterSpacing:".08em", textTransform:"uppercase", marginBottom:4 }}>Дата</div>
+              <div style={{ display:"flex", gap:3 }}>
+                {["Сб\n24", "Нд\n25", "Пн\n26", "Вт\n27", "Ср\n28"].map((d,i)=>(
+                  <div key={i} style={{ flex:1, borderRadius:7, border:`1.5px solid ${i===1?P:"#efefef"}`,
+                    background:i===1?`${P}12`:"#fafafa", padding:"3px 1px", textAlign:"center" }}>
+                    {d.split("\n").map((line,j)=>(
+                      <div key={j} style={{ fontSize:j===0?3.5:5.5, fontWeight:i===1?(j===0?600:900):(j===0?400:600), color:i===1?P:j===0?"#aaa":"#1A1A1F", lineHeight:1.3 }}>{line}</div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Time */}
+            <div>
+              <div style={{ fontSize:4, color:"#aaa", letterSpacing:".08em", textTransform:"uppercase", marginBottom:4 }}>Час</div>
+              <div style={{ display:"flex", gap:3 }}>
+                {["09:00","11:00","14:00","17:00"].map((t,i)=>(
+                  <div key={i} style={{ flex:1, borderRadius:7, border:`1.5px solid ${i===1?P:"#efefef"}`,
+                    background:i===1?`${P}12`:"#fafafa", padding:"4px 1px", textAlign:"center" }}>
+                    <div style={{ fontSize:4.5, fontWeight:i===1?800:500, color:i===1?P:"#555" }}>{t}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Duration */}
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"4px 6px", background:"#fafafa", borderRadius:8, border:"1px solid #f0f0f0" }}>
+              <div style={{ fontSize:4.5, color:"#555" }}>Тривалість</div>
+              <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                <div style={{ width:14, height:14, borderRadius:4, border:"1px solid #ddd", display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"#555" }}>−</div>
+                <div style={{ fontSize:6, fontWeight:800, color:"#1A1A1F" }}>3 год</div>
+                <div style={{ width:14, height:14, borderRadius:4, background:P, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"#fff" }}>+</div>
+              </div>
+            </div>
+          </div>
+          {/* Total + confirm */}
+          <div style={{ padding:"5px 8px 8px", borderTop:"1px solid #f0f0f0" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+              <div style={{ fontSize:4.5, color:"#aaa" }}>Разом · 3 год</div>
+              <div style={{ fontSize:9, fontWeight:900, color:"#1A1A1F" }}>540 грн</div>
+            </div>
+            <div style={{ background:P, borderRadius:9, padding:"7px 0", textAlign:"center" }}>
+              <div style={{ fontSize:6, fontWeight:900, color:"#fff", letterSpacing:".05em" }}>ПІДТВЕРДИТИ БРОНЮВАННЯ</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {/* Dots */}
+      <div style={{ position:"absolute", bottom:-20, left:0, right:0, display:"flex", justifyContent:"center", gap:5 }}>
+        {[0,1,2].map(i=>(
+          <div key={i} onClick={()=>setActive(i)} style={{
+            width: active===i?14:5, height:5, borderRadius:99,
+            background: active===i?P:"rgba(0,0,0,0.18)",
+            transition:"all 0.3s ease", cursor:"pointer"
+          }}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CaseStudy({ project, index: globalIndex }) {
+  const [visible, setVisible] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.1 });
+    if (ref.current) io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+
+  const isEven = globalIndex % 2 === 0;
+  return (
+    <article ref={ref} style={{
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(40px)",
+      transition: `opacity .7s ${globalIndex * 0.1}s cubic-bezier(.4,0,.2,1), transform .8s ${globalIndex * 0.1}s cubic-bezier(.4,0,.2,1)`,
+      borderRadius: 28, overflow:"hidden",
+      border: project.concept ? `1.5px dashed ${project.accent}60` : "1px solid rgba(0,0,0,0.07)",
+      background: "#fff",
+    }}>
+      {/* Concept banner */}
+      {project.concept && (
+        <div style={{
+          display:"flex", alignItems:"center", gap:10,
+          padding:"9px 28px", background:`${project.accent}0D`,
+          borderBottom:`1px dashed ${project.accent}40`,
+        }}>
+          <div style={{ width:7, height:7, borderRadius:"50%", background:project.accent, opacity:.7, flexShrink:0,
+            animation:"concept-pulse 2s ease-in-out infinite" }} />
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:10.5, fontWeight:600,
+            color:project.accent, letterSpacing:".18em", textTransform:"uppercase" }}>
+            Concept · In Development
+          </div>
+          <div style={{ marginLeft:"auto", fontFamily:"'IBM Plex Mono',monospace", fontSize:9,
+            color:`${project.accent}99`, letterSpacing:".08em" }}>not shipped</div>
+          <style>{`@keyframes concept-pulse{0%,100%{opacity:.4}50%{opacity:1}}`}</style>
+        </div>
+      )}
+      {/* Header */}
+      <div style={{
+        background: project.accentLight, borderBottom:"1px solid rgba(0,0,0,0.05)",
+        padding:"clamp(20px,5vw,48px) clamp(16px,5.5vw,56px) clamp(20px,4vw,40px)",
+        display:"flex", flexDirection:"row", gap:48, alignItems:"flex-start",
+        flexWrap:"wrap",
+      }}>
+        <div style={{ flex:"1 1 340px" }}>
+          <div style={{
+            fontFamily:"'IBM Plex Mono',monospace", fontSize:10, letterSpacing:".38em",
+            textTransform:"uppercase", color:project.accent, fontWeight:600, marginBottom:14, opacity:.85
+          }}>{project.index} — {project.type}</div>
+          <div style={{
+            fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:"italic",
+            fontSize:54, fontWeight:600, color:"#1A1A1F", lineHeight:.92, marginBottom:8,
+            letterSpacing:"-.02em"
+          }}>{project.name}</div>
+          <div style={{
+            fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:22,
+            color:project.accent, fontWeight:500, marginBottom:24, letterSpacing:".01em"
+          }}>{project.tagline}</div>
+          <div style={{ display:"flex", gap:20, flexWrap:"wrap" }}>
+            {[{l:"Role", v:project.role},{l:"Timeline",v:project.timeline}].map(({ l, v }) => (
+              <div key={l}>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, letterSpacing:".3em",
+                  textTransform:"uppercase", color:"#7A7A82", fontWeight:600, marginBottom:3 }}>{l}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:12, color:"#1A1A1F", fontWeight:500 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:32 }}>
+          {project.id === "sushi-master"
+            ? <SushiMasterPhone />
+            : project.id === "monopizza"
+              ? <MonopizzaPhone />
+              : project.id === "babysitter"
+                ? <BabysitterPhone />
+                : <MockPhone screens={project.screens} accent={project.accent} />}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div style={{ padding:"clamp(20px,5vw,48px) clamp(16px,5.5vw,56px)", display:"flex", flexDirection:"column", gap:48 }}>
+        {/* Problem */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, letterSpacing:".38em",
+            textTransform:"uppercase", color:"#7A7A82", fontWeight:600, marginBottom:16 }}>Problem</div>
+          <p style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:19, lineHeight:1.6,
+            color:"#1A1A1F", margin:0, maxWidth:"68ch", fontStyle:"italic", fontWeight:500 }}>{project.problem}</p>
+        </div>
+
+        {/* Research */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, letterSpacing:".38em",
+            textTransform:"uppercase", color:"#7A7A82", fontWeight:600, marginBottom:20 }}>UX Research</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:14 }}>
+            {project.research.map((r, i) => (
+              <div key={i} style={{ padding:"16px 18px", background:"rgba(0,0,0,0.025)", borderRadius:14,
+                border:"1px solid rgba(0,0,0,0.06)" }}>
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:20,
+                  fontWeight:600, color:project.accent, lineHeight:1, marginBottom:4 }}>{r.value}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:10, letterSpacing:".12em",
+                  textTransform:"uppercase", color:"#1A1A1F", fontWeight:600, marginBottom:2 }}>{r.label}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9.5, color:"#7A7A82" }}>{r.note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Key insights */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, letterSpacing:".38em",
+            textTransform:"uppercase", color:"#7A7A82", fontWeight:600, marginBottom:16 }}>Key Insights</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            {project.insights.map((ins, i) => (
+              <div key={i} style={{ display:"flex", gap:14, alignItems:"flex-start" }}>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:project.accent,
+                  marginTop:7, flexShrink:0 }} />
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:17, lineHeight:1.55,
+                  color:"#1A1A1F", fontStyle:"italic" }}>{ins}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Design decisions */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, letterSpacing:".38em",
+            textTransform:"uppercase", color:"#7A7A82", fontWeight:600, marginBottom:20 }}>Design Decisions</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:16 }}>
+            {project.decisions.map((d, i) => (
+              <div key={i} style={{ padding:"20px 22px", borderRadius:16, background:"#fff",
+                border:`1.5px solid ${project.accent}22`,
+                borderLeft:`3px solid ${project.accent}` }}>
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:17,
+                  fontWeight:700, color:"#1A1A1F", marginBottom:8 }}>{d.title}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:11.5, lineHeight:1.65,
+                  color:"#5A5A62" }}>{d.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Metrics */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, letterSpacing:".38em",
+            textTransform:"uppercase", color:"#7A7A82", fontWeight:600, marginBottom:20 }}>Outcomes</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:14 }}>
+            {project.metrics.map((m, i) => <MetricCard key={i} {...m} />)}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function PortfolioPage({ onClose }) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
+  const [scrolled, setScrolled] = React.useState(false);
+  const scrollRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 60);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const portfolioCss = `
+    @keyframes grain{
+      0%,100%{transform:translate(0,0)}
+      10%{transform:translate(-2%,-3%)}
+      30%{transform:translate(3%,2%)}
+      50%{transform:translate(-1%,4%)}
+      70%{transform:translate(2%,-2%)}
+      90%{transform:translate(-3%,1%)}
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    @keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+    .pf-overlay{position:fixed;inset:0;z-index:9999;background:#F7F4F0;
+      opacity:0;transition:opacity .45s cubic-bezier(.4,0,.2,1);overflow:hidden}
+    .pf-overlay.in{opacity:1}
+    .pf-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+      scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+    .pf-nav{position:fixed;top:0;left:0;right:0;z-index:10000;
+      height:64px;display:flex;align-items:center;padding:0 48px;
+      background:rgba(247,244,240,0);transition:background .3s,box-shadow .3s;
+      justify-content:space-between}
+    .pf-nav.scrolled{background:rgba(247,244,240,0.88);
+      -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+      box-shadow:0 1px 0 rgba(0,0,0,0.07)}
+    .pf-close{appearance:none;width:40px;height:40px;border-radius:999px;
+      border:1px solid rgba(0,0,0,0.15);background:transparent;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;color:#1A1A1F;transition:all .2s;opacity:.7}
+    .pf-close:hover{opacity:1;transform:rotate(90deg);border-color:rgba(0,0,0,0.4)}
+    .pf-grain{position:fixed;inset:-50%;width:200%;height:200%;
+      pointer-events:none;z-index:9998;opacity:.028;
+      background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+      animation:grain 0.5s steps(2) infinite}
+    @media(max-width:760px){
+      .pf-nav{padding:0 20px;height:56px}
+      .pf-nav .pf-logo{font-size:13px}
+    }
+  `;
+
+  return (
+    <div className={"pf-overlay" + (mounted ? " in" : "")}>
+      <style>{portfolioCss}</style>
+      <div className="pf-grain" aria-hidden="true" />
+
+      {/* Nav */}
+      <nav className={"pf-nav" + (scrolled ? " scrolled" : "")}>
+        <div style={{
+          fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:"italic",
+          fontSize:17, fontWeight:600, color:"#1A1A1F", letterSpacing:".02em"
+        }} className="pf-logo">Kseniya Merza — Portfolio</div>
+        <button className="pf-close" onClick={onClose} aria-label="Close portfolio">✕</button>
+      </nav>
+
+      {/* Scrollable content */}
+      <div className="pf-scroll" ref={scrollRef}>
+        <div style={{ maxWidth:960, margin:"0 auto", padding:"120px 24px 100px" }}>
+
+          {/* Hero */}
+          <div style={{
+            marginBottom:100, animation:"fadeUp .7s cubic-bezier(.4,0,.2,1) both"
+          }}>
+            <div style={{
+              fontFamily:"'IBM Plex Mono',monospace", fontSize:10, letterSpacing:".42em",
+              textTransform:"uppercase", color:"#B85EE0", fontWeight:600, marginBottom:18, opacity:.8
+            }}>Selected Work · 2021 – 2022</div>
+            <h1 style={{
+              fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:"italic",
+              fontSize:"clamp(52px,8vw,88px)", fontWeight:600, lineHeight:.9,
+              color:"#1A1A1F", margin:"0 0 24px", letterSpacing:"-.02em"
+            }}>Design that<br/>moves numbers.</h1>
+            <p style={{
+              fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:20, lineHeight:1.6,
+              color:"#5A5A62", maxWidth:"52ch", margin:0, fontStyle:"italic", fontWeight:500
+            }}>Three case studies where UX research drove measurable outcomes — from food delivery to childcare trust and safety.</p>
+
+            {/* Stat row */}
+            <div style={{ display:"flex", gap:40, marginTop:48, flexWrap:"wrap" }}>
+              {[
+                { v:"+52%", l:"Sushi Master cart lift" },
+                { v:"+67%", l:"Monopizza conversion" },
+                { v:"+38%", l:"Babysitter booking lift" },
+              ].map(({ v, l }) => (
+                <div key={l}>
+                  <div style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic",
+                    fontSize:38, fontWeight:600, color:"#B85EE0", lineHeight:1 }}>{v}</div>
+                  <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:10,
+                    letterSpacing:".22em", textTransform:"uppercase", color:"#7A7A82", marginTop:4 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Case studies */}
+          <div style={{ display:"flex", flexDirection:"column", gap:32 }}>
+            {PROJECTS.map((p, i) => <CaseStudy key={p.id} project={p} index={i} />)}
+          </div>
+
+          {/* Footer CTA */}
+          <div style={{
+            marginTop:96, textAlign:"center",
+            animation:"fadeUp .7s .3s cubic-bezier(.4,0,.2,1) both"
+          }}>
+            <div style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:"italic",
+              fontSize:36, fontWeight:600, color:"#1A1A1F", marginBottom:8 }}>
+              Want to work together?
+            </div>
+            <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:12, color:"#7A7A82",
+              letterSpacing:".12em", marginBottom:28 }}>
+              Open to product design roles · Kyiv / Remote
+            </div>
+            <a href="https://www.linkedin.com/in/kseniya-merza-08754077/" target="_blank" rel="noopener noreferrer"
+              style={{
+                display:"inline-flex", alignItems:"center", gap:10,
+                height:52, padding:"0 28px", borderRadius:999,
+                background:"#7E3DA0", color:"#fff", textDecoration:"none",
+                fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:17, fontWeight:600,
+                transition:"background .2s, transform .2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background="#6A2E89"; e.currentTarget.style.transform="translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background="#7E3DA0"; e.currentTarget.style.transform=""; }}
+            >
+              Connect on LinkedIn <span style={{ fontSize:14 }}>→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// yaroslav-portfolio.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+
+function MetricTerminal({ stats, accent }) {
+  const [active, setActive] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % stats.length), 2600);
+    return () => clearInterval(t);
+  }, [stats.length]);
+
+  return (
+    <div style={{
+      position:"relative", width:196, height:170, flexShrink:0,
+      background:"rgba(0,0,0,0.28)", borderRadius:16, padding:"16px 18px",
+      border:`1px solid rgba(255,255,255,0.14)`,
+      boxShadow:`0 20px 60px rgba(0,0,0,0.3), 0 0 32px ${accent}18`,
+      fontFamily:"'IBM Plex Mono',monospace",
+    }}>
+      <div style={{ display:"flex", gap:5, marginBottom:12 }}>
+        {[accent, "rgba(255,255,255,0.18)", "rgba(255,255,255,0.18)"].map((c,i) => (
+          <div key={i} style={{ width:7, height:7, borderRadius:"50%", background:c, opacity:.75 }} />
+        ))}
+      </div>
+      <div style={{ fontSize:9, letterSpacing:".28em", textTransform:"uppercase",
+        color:"rgba(255,255,255,.82)", marginBottom:6 }}>{">"} {stats[active]?.label}</div>
+      <div style={{
+        fontSize:30, fontWeight:700, color:accent, lineHeight:1,
+        letterSpacing:"-.04em", marginBottom:4,
+        transition:"color .4s"
+      }}>{stats[active]?.value}</div>
+      <div style={{ fontSize:8.5, color:"rgba(255,255,255,.72)", letterSpacing:".14em",
+        textTransform:"uppercase" }}>{stats[active]?.sub}</div>
+      <div style={{ position:"absolute", bottom:14, left:0, right:0,
+        display:"flex", justifyContent:"center", gap:5 }}>
+        {stats.map((_,i) => (
+          <div key={i} onClick={() => setActive(i)} style={{
+            width: active===i ? 14 : 5, height:4, borderRadius:99,
+            background: active===i ? accent : "rgba(255,255,255,0.14)",
+            transition:"all 0.3s ease", cursor:"pointer"
+          }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function YMetricCard({ value, label, accent }) {
+  return (
+    <div style={{
+      background:"rgba(0,0,0,0.2)",
+      borderRadius:14, padding:"18px 20px",
+      border:"1px solid rgba(255,255,255,0.12)",
+      transition:"transform .25s ease, border-color .25s ease",
+    }}
+    onMouseEnter={e => { e.currentTarget.style.transform="translateY(-3px)"; e.currentTarget.style.borderColor=accent+"55"; }}
+    onMouseLeave={e => { e.currentTarget.style.transform=""; e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"; }}
+    >
+      <div style={{
+        fontFamily:"'IBM Plex Mono',monospace", fontSize:26, fontWeight:700,
+        color:accent, lineHeight:1, marginBottom:6, letterSpacing:"-.03em"
+      }}>{value}</div>
+      <div style={{
+        fontFamily:"'IBM Plex Mono',monospace", fontSize:9.5,
+        letterSpacing:".22em", textTransform:"uppercase",
+        color:"rgba(255,255,255,0.82)", fontWeight:500
+      }}>{label}</div>
+    </div>
+  );
+}
+
+function YCaseStudy({ project, index: globalIndex }) {
+  const [visible, setVisible] = React.useState(false);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.08 });
+    if (ref.current) io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <article ref={ref} style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? "none" : "translateY(40px)",
+      transition: `opacity .7s ${globalIndex*0.1}s cubic-bezier(.4,0,.2,1), transform .8s ${globalIndex*0.1}s cubic-bezier(.4,0,.2,1)`,
+      borderRadius:24, overflow:"hidden",
+      border:"1px solid rgba(255,255,255,0.12)",
+      background:"rgba(0,0,0,0.22)",
+    }}>
+      {/* Header */}
+      <div style={{
+        background:project.accentLight,
+        borderBottom:"1px solid rgba(255,255,255,0.06)",
+        padding:"44px 52px 36px",
+        display:"flex", flexDirection:"row", gap:40,
+        alignItems:"flex-start", flexWrap:"wrap",
+      }}>
+        <div style={{ flex:"1 1 300px" }}>
+          <div style={{
+            fontFamily:"'IBM Plex Mono',monospace", fontSize:9.5,
+            letterSpacing:".42em", textTransform:"uppercase",
+            color:project.accent, fontWeight:600, marginBottom:14, opacity:.85
+          }}>{project.index} — {project.type}</div>
+          <div style={{
+            fontFamily:"'IBM Plex Mono',monospace",
+            fontSize:"clamp(30px,4.5vw,50px)", fontWeight:700,
+            color:"#fff", lineHeight:.95, marginBottom:10, letterSpacing:"-.04em"
+          }}>{project.name}</div>
+          <div style={{
+            fontFamily:"'Cormorant Garamond',Georgia,serif",
+            fontSize:20, color:project.accent, fontWeight:500,
+            marginBottom:24, fontStyle:"italic"
+          }}>{project.tagline}</div>
+          <div style={{ display:"flex", gap:24, flexWrap:"wrap" }}>
+            {[{l:"Role",v:project.role},{l:"Timeline",v:project.timeline}].map(({l,v}) => (
+              <div key={l}>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:8.5,
+                  letterSpacing:".3em", textTransform:"uppercase",
+                  color:"rgba(255,255,255,.3)", fontWeight:600, marginBottom:3 }}>{l}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:11,
+                  color:"rgba(255,255,255,.8)", fontWeight:500 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <MetricTerminal stats={project.stats} accent={project.accent} />
+      </div>
+
+      {/* Body */}
+      <div style={{ padding:"44px 52px", display:"flex", flexDirection:"column", gap:44 }}>
+
+        {/* Problem */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:8.5,
+            letterSpacing:".42em", textTransform:"uppercase",
+            color:"rgba(255,255,255,.5)", fontWeight:600, marginBottom:14 }}>Problem</div>
+          <p style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:18.5,
+            lineHeight:1.62, color:"rgba(255,255,255,.82)", margin:0,
+            maxWidth:"68ch", fontStyle:"italic", fontWeight:500 }}>{project.problem}</p>
+        </div>
+
+        {/* Discovery */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:8.5,
+            letterSpacing:".42em", textTransform:"uppercase",
+            color:"rgba(255,255,255,.5)", fontWeight:600, marginBottom:18 }}>Discovery</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(175px,1fr))", gap:12 }}>
+            {project.research.map((r, i) => (
+              <div key={i} style={{
+                padding:"14px 16px", background:"rgba(0,0,0,0.18)",
+                borderRadius:12, border:"1px solid rgba(255,255,255,.1)"
+              }}>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:18,
+                  fontWeight:700, color:project.accent, lineHeight:1,
+                  marginBottom:5, letterSpacing:"-.02em" }}>{r.value}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9,
+                  letterSpacing:".14em", textTransform:"uppercase",
+                  color:"rgba(255,255,255,.65)", fontWeight:600, marginBottom:2 }}>{r.label}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9,
+                  color:"rgba(255,255,255,.3)" }}>{r.note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Key Insights */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:8.5,
+            letterSpacing:".42em", textTransform:"uppercase",
+            color:"rgba(255,255,255,.5)", fontWeight:600, marginBottom:14 }}>Key Insights</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            {project.insights.map((ins, i) => (
+              <div key={i} style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
+                <div style={{ width:5, height:5, borderRadius:"50%",
+                  background:project.accent, marginTop:8, flexShrink:0 }} />
+                <div style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:17,
+                  lineHeight:1.58, color:"rgba(255,255,255,.78)", fontStyle:"italic" }}>{ins}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Product Decisions */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:8.5,
+            letterSpacing:".42em", textTransform:"uppercase",
+            color:"rgba(255,255,255,.5)", fontWeight:600, marginBottom:18 }}>Product Decisions</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:14 }}>
+            {project.decisions.map((d, i) => (
+              <div key={i} style={{
+                padding:"18px 20px", borderRadius:14,
+                background:"rgba(0,0,0,0.18)",
+                border:`1px solid ${project.accent}30`,
+                borderLeft:`3px solid ${project.accent}`
+              }}>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:12,
+                  fontWeight:700, color:"#fff", marginBottom:8,
+                  letterSpacing:"-.01em" }}>{d.title}</div>
+                <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:11,
+                  lineHeight:1.65, color:"rgba(255,255,255,.62)" }}>{d.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Outcomes */}
+        <div>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:8.5,
+            letterSpacing:".42em", textTransform:"uppercase",
+            color:"rgba(255,255,255,.5)", fontWeight:600, marginBottom:18 }}>Outcomes</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12 }}>
+            {project.metrics.map((m, i) => (
+              <YMetricCard key={i} value={m.value} label={m.label} accent={project.accent} />
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </article>
+  );
+}
+
+function YaroslavPortfolioPage({ onClose }) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
+  const [scrolled, setScrolled] = React.useState(false);
+  const scrollRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 60);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const yCss = `
+    @keyframes yfadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    @keyframes yfloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-2%,3%) scale(1.06)}}
+    @keyframes yfloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,-2%) scale(1.08)}}
+    .ypf-overlay{position:fixed;inset:0;z-index:9999;background:#2E7D32;
+      opacity:0;transition:opacity .45s cubic-bezier(.4,0,.2,1);overflow:hidden}
+    .ypf-overlay.in{opacity:1}
+    .ypf-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+      scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+    .ypf-nav{position:fixed;top:0;left:0;right:0;z-index:10000;
+      height:64px;display:flex;align-items:center;padding:0 48px;
+      background:rgba(46,125,50,0);transition:background .3s,box-shadow .3s;
+      justify-content:space-between}
+    .ypf-nav.scrolled{background:rgba(26,68,26,0.94);
+      -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+      box-shadow:0 1px 0 rgba(255,255,255,0.1)}
+    .ypf-close{appearance:none;width:40px;height:40px;border-radius:999px;
+      border:1px solid rgba(255,255,255,0.32);background:transparent;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;color:#fff;transition:all .2s;opacity:.72}
+    .ypf-close:hover{opacity:1;transform:rotate(90deg);border-color:rgba(255,255,255,0.7)}
+    .ypf-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .ypf-hero{position:relative;margin-bottom:96px;
+      animation:yfadeUp .7s cubic-bezier(.4,0,.2,1) both;
+      padding:72px 0 24px}
+    .ypf-grid{position:absolute;inset:-80px -80px -20px -80px;pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.09) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,0.09) 1px,transparent 1px);
+      background-size:48px 48px;
+      -webkit-mask-image:radial-gradient(ellipse 80% 90% at 22% 42%,black 0%,transparent 68%);
+      mask-image:radial-gradient(ellipse 80% 90% at 22% 42%,black 0%,transparent 68%)}
+    .ypf-glow{display:none}
+    .ypf-glow2{display:none}
+    @media(max-width:760px){
+      .ypf-nav{padding:0 20px;height:56px}
+      .ypf-nav .ypf-logo{font-size:11px}
+      .ypf-hero{padding:48px 0 16px}
+    }
+  `;
+
+  return (
+    <div className={"ypf-overlay" + (mounted ? " in" : "")}>
+      <style>{yCss}</style>
+
+      {/* Floating blobs — mirrors the NetworkField from the main page */}
+      <div className="ypf-blob" style={{ width:230,height:130, top:"12%",  left:"24%",  background:"radial-gradient(ellipse,rgba(255,255,255,0.11) 0%,transparent 70%)", animation:"yfloat 16s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:150,height:90,  top:"7%",   right:"14%", background:"radial-gradient(ellipse,rgba(255,255,255,0.08) 0%,transparent 70%)", animation:"yfloat2 20s 2s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:100,height:58,  top:"7%",   right:"28%", background:"radial-gradient(ellipse,rgba(255,255,255,0.06) 0%,transparent 70%)", animation:"yfloat 13s 1s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:130,height:75,  top:"42%",  right:"6%",  background:"radial-gradient(ellipse,rgba(255,255,255,0.09) 0%,transparent 70%)", animation:"yfloat2 14s 0.5s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:190,height:110, top:"36%",  left:"52%",  background:"radial-gradient(ellipse,rgba(255,255,255,0.06) 0%,transparent 70%)", animation:"yfloat 18s 3s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:115,height:65,  bottom:"18%",left:"36%", background:"radial-gradient(ellipse,rgba(255,255,255,0.08) 0%,transparent 70%)", animation:"yfloat2 22s 1.5s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:80, height:48,  bottom:"26%",right:"22%",background:"radial-gradient(ellipse,rgba(255,255,255,0.07) 0%,transparent 70%)", animation:"yfloat 17s 4s ease-in-out infinite" }} />
+      <div className="ypf-blob" style={{ width:160,height:95,  bottom:"8%", right:"38%",background:"radial-gradient(ellipse,rgba(255,255,255,0.07) 0%,transparent 70%)", animation:"yfloat2 19s 2.5s ease-in-out infinite" }} />
+
+      <nav className={"ypf-nav" + (scrolled ? " scrolled" : "")}>
+        <div style={{
+          fontFamily:"'IBM Plex Mono',monospace", fontSize:12, fontWeight:700,
+          color:"rgba(255,255,255,0.82)", letterSpacing:".24em", textTransform:"uppercase"
+        }} className="ypf-logo">Yaroslav Merza — Portfolio</div>
+        <button className="ypf-close" onClick={onClose} aria-label="Close portfolio">✕</button>
+      </nav>
+
+      <div className="ypf-scroll" ref={scrollRef}>
+        <div style={{ maxWidth:960, margin:"0 auto", padding:"120px 24px 100px" }}>
+
+          {/* Hero */}
+          <div className="ypf-hero">
+            <div className="ypf-grid" aria-hidden="true" />
+            <div className="ypf-glow" aria-hidden="true" />
+            <div className="ypf-glow2" aria-hidden="true" />
+            <div style={{
+              position:"relative", zIndex:1,
+              fontFamily:"'IBM Plex Mono',monospace", fontSize:9.5,
+              letterSpacing:".46em", textTransform:"uppercase",
+              color:"#E8DDB5", fontWeight:600, marginBottom:18, opacity:.72
+            }}>Selected Work · 2020 – Present</div>
+            <h1 style={{
+              position:"relative", zIndex:1,
+              fontFamily:"'IBM Plex Mono',monospace",
+              fontSize:"clamp(44px,8vw,80px)", fontWeight:700,
+              lineHeight:.92, margin:"0 0 24px", letterSpacing:"-.04em",
+              color:"#fff"
+            }}>
+              Products<br/>
+              <span style={{ color:"#E8DDB5" }}>that scale.</span>
+            </h1>
+            <p style={{
+              position:"relative", zIndex:1,
+              fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:20,
+              lineHeight:1.62, color:"rgba(255,255,255,.5)", maxWidth:"52ch",
+              margin:0, fontStyle:"italic", fontWeight:500
+            }}>Three case studies where product strategy drove measurable business outcomes — from zero to millions of users.</p>
+
+            {/* Stats */}
+            <div style={{ position:"relative", zIndex:1, display:"flex", gap:44, marginTop:52, flexWrap:"wrap" }}>
+              {[
+                { v:"2M+",   l:"BROCARD installs" },
+                { v:"+40%",  l:"Crystal traffic growth" },
+                { v:"3M+",   l:"DOC.ua appointments" },
+              ].map(({ v, l }) => (
+                <div key={l}>
+                  <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:36,
+                    fontWeight:700, color:"#E8DDB5", lineHeight:1,
+                    letterSpacing:"-.04em" }}>{v}</div>
+                  <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9.5,
+                    letterSpacing:".3em", textTransform:"uppercase",
+                    color:"rgba(255,255,255,.35)", marginTop:8 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Case studies */}
+          <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+            {Y_PROJECTS.map((p, i) => <YCaseStudy key={p.id} project={p} index={i} />)}
+          </div>
+
+          {/* Footer CTA */}
+          <div style={{
+            marginTop:96, textAlign:"center",
+            animation:"yfadeUp .7s .3s cubic-bezier(.4,0,.2,1) both"
+          }}>
+            <div style={{
+              fontFamily:"'IBM Plex Mono',monospace",
+              fontSize:"clamp(22px,3.5vw,38px)", fontWeight:700,
+              color:"#fff", marginBottom:10, letterSpacing:"-.03em"
+            }}>Have a product challenge?</div>
+            <div style={{
+              fontFamily:"'IBM Plex Mono',monospace", fontSize:10.5,
+              color:"rgba(255,255,255,.35)", letterSpacing:".22em",
+              textTransform:"uppercase", marginBottom:32
+            }}>Open to product leadership roles · Kyiv / Remote</div>
+            <a href="https://www.linkedin.com/in/iaroslavmerza/" target="_blank" rel="noopener noreferrer"
+              style={{
+                display:"inline-flex", alignItems:"center", gap:10,
+                height:52, padding:"0 30px", borderRadius:999,
+                background:"#E8DDB5", color:"#1A1A1F", textDecoration:"none",
+                fontFamily:"'IBM Plex Mono',monospace", fontSize:11,
+                fontWeight:700, letterSpacing:".18em", textTransform:"uppercase",
+                transition:"background .2s, transform .2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background="#fff"; e.currentTarget.style.transform="translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background="#E8DDB5"; e.currentTarget.style.transform=""; }}
+            >Connect on LinkedIn <span style={{ fontSize:14 }}>→</span></a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MusicButton({ playing, blocked, onClick }) {
+  return (
+    <div className="music-wrap">
+      {blocked && !playing && (
+        <span className="music-hint">click anywhere to start music</span>
+      )}
+      <button
+        className={"music-btn" + (playing ? " on" : "") + (blocked ? " pulse" : "")}
+        onClick={onClick}
+        aria-label={playing ? "Pause ambient music" : "Play ambient music"}
+        title={playing ? "Pause music" : "Play ambient music"}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M3 2.5L11.5 7L3 11.5V2.5Z" fill="currentColor"/>
+        </svg>
+        <span className="music-bars" aria-hidden="true">
+          <i /><i /><i /><i />
+        </span>
+      </button>
+    </div>
+  );
+}
+
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [showPortfolio, setShowPortfolio] = React.useState(false);
+  const [showYPortfolio, setShowYPortfolio] = React.useState(false);
   const { w, h, isMobile, axis } = useViewport();
   const pal = PALETTES[t.palette] || PALETTES["cobalt-orchid"];
+
+  React.useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = pal.yBg;
+  }, [pal.yBg]);
 
   const [hover, setHover] = React.useState(null);
   const [taken, setTaken] = React.useState(null);
@@ -684,18 +2423,87 @@ function App() {
   const split = useSplit({ axis, hover, taken, motion });
 
   const [magnet, setMagnet] = React.useState({ x: 0.5, y: 0.5 });
+  const magnetRaf = React.useRef(null);
   React.useEffect(() => {
     if (taken || motion === "off" || isMobile) return;
-    const on = (e) => setMagnet({ x: e.clientX / w, y: e.clientY / h });
+    const on = (e) => {
+      if (magnetRaf.current) return;
+      const cx = e.clientX, cy = e.clientY;
+      magnetRaf.current = requestAnimationFrame(() => {
+        setMagnet({ x: cx / w, y: cy / h });
+        magnetRaf.current = null;
+      });
+    };
     window.addEventListener("pointermove", on, { passive: true });
-    return () => window.removeEventListener("pointermove", on);
+    return () => { window.removeEventListener("pointermove", on); cancelAnimationFrame(magnetRaf.current); };
   }, [taken, motion, isMobile, w, h]);
 
   React.useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") setTaken(null); };
+    const onKey = (e) => {
+      if (e.key === "Escape") setTaken(null);
+      if (e.key === "T" && e.shiftKey) window.dispatchEvent(new MessageEvent("message", { data: { type: "__activate_edit_mode" } }));
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // ── Music ──────────────────────────────────────────────────────────────────
+  const audioRef = React.useRef(null);
+  const [musicPlaying, setMusicPlaying] = React.useState(false);
+  const [autoplayBlocked, setAutoplayBlocked] = React.useState(false);
+  const fadeRef = React.useRef(null);
+
+  const startMusic = React.useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return Promise.resolve();
+    clearInterval(fadeRef.current);
+    audio.volume = 0;
+    return audio.play().then(() => {
+      setMusicPlaying(true);
+      setAutoplayBlocked(false);
+      fadeRef.current = setInterval(() => {
+        if (audio.volume < 0.35) { audio.volume = Math.min(0.38, audio.volume + 0.03); }
+        else { audio.volume = 0.38; clearInterval(fadeRef.current); }
+      }, 40);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const tryAutoplay = () => {
+      startMusic().catch(() => setAutoplayBlocked(true));
+    };
+    if (audio.readyState >= 3) {
+      tryAutoplay();
+    } else {
+      audio.addEventListener("canplaythrough", tryAutoplay, { once: true });
+      return () => audio.removeEventListener("canplaythrough", tryAutoplay);
+    }
+  }, []); // eslint-disable-line
+
+  React.useEffect(() => {
+    if (!autoplayBlocked) return;
+    const onInteraction = () => startMusic().catch(() => {});
+    document.addEventListener("pointerdown", onInteraction, { once: true });
+    return () => document.removeEventListener("pointerdown", onInteraction);
+  }, [autoplayBlocked, startMusic]);
+
+  const toggleMusic = React.useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (musicPlaying) {
+      clearInterval(fadeRef.current);
+      fadeRef.current = setInterval(() => {
+        if (audio.volume > 0.03) { audio.volume = Math.max(0, audio.volume - 0.04); }
+        else { audio.pause(); audio.volume = 0.38; clearInterval(fadeRef.current); }
+      }, 40);
+      setMusicPlaying(false);
+    } else {
+      startMusic().catch(() => {});
+    }
+  }, [musicPlaying, startMusic]);
+  // ──────────────────────────────────────────────────────────────────────────
 
   const handleHover = (side) => { if (!taken) setHover(side); };
   const handleLeave = () => setHover(null);
@@ -724,28 +2532,28 @@ function App() {
     .net{opacity:.95}
     .grid{opacity:.5}
 
-    .ident{position:absolute;inset:0;display:flex;align-items:center;padding: 6vw 5vw;pointer-events:none}
+    .ident{position:absolute;inset:0;display:flex;align-items:center;padding:clamp(90px,13vh,140px) clamp(22px,3.5vw,56px) clamp(28px,4vw,72px);pointer-events:none}
     .ident.y{justify-content:flex-start}
     .ident.k{justify-content:flex-start}
     .stack{display:flex;flex-direction:column;gap:14px;max-width:560px;pointer-events:auto}
 
-    .eyebrow{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.42em;
+    .eyebrow{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.22em;
       text-transform:uppercase;color:${pal.y};opacity:.7}
-    .k .eyebrow{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.32em;color:${pal.k};font-size:13px;font-weight:500}
+    .k .eyebrow{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.32em;color:#3B1D58;font-size:13px;font-weight:500}
 
-    .surname{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:clamp(40px,6vw,72px);
+    .surname{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:clamp(40px,4.5vw + 0.5rem,72px);
       font-weight:700;letter-spacing:-.04em;line-height:.95;color:#fff}
     .k .surname{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;
-      font-size:clamp(48px,7vw,84px);letter-spacing:-.02em;color:#141414}
+      font-size:clamp(48px,5vw + 0.5rem,84px);letter-spacing:-.02em;color:#141414}
 
     .role{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.18em;color:#fff;font-weight:500}
     .k .role{font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;letter-spacing:.14em;
       color:#7E3DA0;font-style:italic;font-weight:500}
-    .role .cursor{display:inline-block;width:.55ch;background:#fff;margin-left:2px;animation:blink 1s steps(2,end) infinite}
+    .role .cursor{display:inline-block;width:.55ch;background:#fff;margin-left:2px;animation:blink 1.2s ease-in-out infinite}
     .k .role .cursor{display:none}
 
     .ghost{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;line-height:1.7;color:#fff;opacity:.42;
-      white-space:pre;margin-top:12px;max-width:42ch}
+      white-space:pre-wrap;word-break:break-word;overflow-wrap:break-word;margin-top:12px;max-width:42ch;overflow:hidden}
 
     .bio{margin-top:12px;max-width:42ch}
     .y .bio{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;line-height:1.7;color:rgba(255,255,255,.88)}
@@ -763,7 +2571,7 @@ function App() {
     .divide{position:absolute;${axis === "v" ? "top:0;bottom:0" : "left:0;right:0"};
       ${axis === "v" ? "width:1.5px" : "height:1.5px"};
       pointer-events:none;z-index:5;transition:filter .4s ease}
-    .divide.glow{${axis === "v" ? "width:6px;filter:blur(6px)" : "height:6px;filter:blur(6px)"};opacity:.5}
+    .divide.glow{${axis === "v" ? "width:3px;filter:blur(3px)" : "height:3px;filter:blur(3px)"};opacity:.4}
 
     .wordmark{position:absolute;top:32px;left:0;right:0;z-index:8;pointer-events:none;
       text-align:center;line-height:1}
@@ -785,10 +2593,11 @@ function App() {
     .explore{position:absolute;bottom:22px;font-family:'IBM Plex Mono',ui-monospace,monospace;
       font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#fff;opacity:.75;z-index:4;font-weight:500}
     .explore.y{left:5vw}
-    .explore.k{right:5vw;color:#5A4060;opacity:.85}
+    .explore.k{right:5vw;color:#4A1D6E;opacity:1}
     .k .explore{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:.18em;font-size:13px;font-weight:600;text-transform:none}
 
     .taken .ident{display:none}
+    .taken .wordmark{opacity:0;pointer-events:none;transition:opacity .25s}
     .detail{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;
       padding: 6vh 6vw;pointer-events:none;opacity:0;transition:opacity .55s .15s cubic-bezier(.4,0,.2,1);
       overflow-y:auto}
@@ -823,7 +2632,7 @@ function App() {
     .k .tl-co[href]:hover{color:#7E3DA0}
     .tl-role{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;color:#fff;opacity:.85;margin-top:3px;letter-spacing:.04em}
     .k .tl-role{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15.5px;color:#7E3DA0;letter-spacing:.02em;opacity:1}
-    .tl-per{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:5px}
+    .tl-per{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.82);margin-top:5px}
     .k .tl-per{color:#7A7A82}
 
     .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
@@ -874,7 +2683,7 @@ function App() {
     .taken .detail-inner > *{opacity:1;transform:none}
     .taken .detail-inner > *:nth-child(2){transition-delay:.48s}
 
-    @keyframes blink{50%{background:transparent}}
+    @keyframes blink{0%,45%{opacity:1}55%,100%{opacity:0}}
     @keyframes drift{
       0%,100%{transform:translate(0,0)}
       50%{transform:translate(2%,-1.5%)}
@@ -883,7 +2692,52 @@ function App() {
       0%,100%{transform:translate(0,0) scale(1)}
       50%{transform:translate(-3%,2%) scale(1.06)}
     }
+    @keyframes blob-drift-a{
+      0%,100%{transform:translate(0,0) scale(1)}
+      33%{transform:translate(-3%,2.5%) scale(1.08)}
+      66%{transform:translate(2%,-1.5%) scale(0.95)}
+    }
+    @keyframes blob-drift-b{
+      0%,100%{transform:translate(0,0) scale(1)}
+      40%{transform:translate(3%,-3%) scale(1.12)}
+      80%{transform:translate(-2%,2%) scale(0.93)}
+    }
+    @keyframes blob-drift-c{
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(-4%,3%) scale(1.1)}
+    }
+    @keyframes blob-pulse{
+      0%,100%{opacity:0.7;transform:scale(1)}
+      50%{opacity:1;transform:scale(1.12)}
+    }
+    @keyframes sparkle{
+      0%,100%{opacity:0.1;transform:scale(1)}
+      50%{opacity:0.65;transform:scale(1.7)}
+    }
+    @keyframes path-shimmer{
+      0%,100%{opacity:0.12}
+      50%{opacity:0.42}
+    }
 
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{
+        animation-duration:0.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:0.01ms !important;
+      }
+    }
+
+    @media (max-width:1280px){
+      .detail-shell{gap:40px}
+      .detail-inner{gap:48px}
+    }
+    @media (max-width:1024px){
+      .stack{max-width:440px}
+      .detail{padding:5vh 5vw}
+      .detail-inner{grid-template-columns:1fr;gap:36px}
+      .detail-shell{gap:32px}
+      .tl-co{font-size:14px}
+    }
     @media (max-width:760px){
       .ident{padding:28px 22px;align-items:center}
       .stack{gap:10px;max-width:100%}
@@ -892,7 +2746,7 @@ function App() {
       .role{font-size:12px}
       .k .role{font-size:16px}
       .bio{font-size:14px;max-width:38ch}
-      .k .bio{font-size:17px;max-width:34ch}
+      .k .bio{font-size:15px;max-width:100%}
       .arrow{font-size:10px;margin-top:14px}
       .k .arrow{font-size:14px}
       .ghost{display:none}
@@ -904,7 +2758,7 @@ function App() {
       .wordmark .sub{margin-top:10px}
       .wordmark .sub .side{font-size:9px;letter-spacing:.36em;width:7em}
       .wordmark .sub .dot{margin:0 .7em}
-      .wm-y{clip-path:none !important}
+      .wm-y{clip-path:none !important;text-shadow:0 0 14px rgba(0,0,0,0.55),0 1px 4px rgba(0,0,0,0.4)}
       .wm-k{display:none}
 
       .detail{padding:64px 22px 28px}
@@ -939,9 +2793,51 @@ function App() {
   const mag = (motion === "magnetic" && !taken && !isMobile)
     ? (axis === "v" ? (magnet.y - 0.5) * 6 : (magnet.x - 0.5) * 6) : 0;
 
+  const musicCss = `
+    .music-wrap{
+      position:fixed;bottom:max(22px,calc(env(safe-area-inset-bottom) + 8px));left:50%;transform:translateX(-50%);
+      z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;
+    }
+    .music-hint{
+      font-family:'IBM Plex Mono',ui-monospace,monospace;
+      font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+      color:#fff;white-space:nowrap;pointer-events:none;
+      background:rgba(0,0,0,0.62);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+      border-radius:99px;padding:4px 12px;
+      border:1px solid rgba(255,255,255,0.12);
+      animation:hint-pulse 2s ease-in-out infinite;
+    }
+    @keyframes hint-pulse{0%,100%{opacity:.45}50%{opacity:1}}
+    .music-btn{
+      width:38px;height:38px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.7);
+      -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+      transition:background .25s,border-color .25s,color .25s,transform .2s;
+      padding:0;
+    }
+    .music-btn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45);color:#fff;transform:scale(1.08)}
+    .music-btn.pulse{border-color:rgba(255,255,255,.55);animation:btn-pulse 2s ease-in-out infinite}
+    @keyframes btn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 5px rgba(255,255,255,.1)}}
+    .music-bars{display:none;align-items:flex-end;gap:2px;height:12px}
+    .music-btn.on .music-bars{display:flex}
+    .music-btn.on svg{display:none}
+    .music-bars i{display:block;width:2.5px;border-radius:2px;background:currentColor;
+      transform-origin:center bottom;animation:bar-bounce 1s ease-in-out infinite alternate}
+    .music-bars i:nth-child(1){height:8px;animation-delay:0s}
+    .music-bars i:nth-child(2){height:11px;animation-delay:.15s}
+    .music-bars i:nth-child(3){height:9px;animation-delay:.3s}
+    .music-bars i:nth-child(4){height:7px;animation-delay:.08s}
+    @keyframes bar-bounce{0%{transform:scaleY(.5);opacity:.6}100%{transform:scaleY(1);opacity:1}}
+  `;
+
   return (
     <React.Fragment>
       <style>{css}</style>
+      <style>{musicCss}</style>
+      <audio ref={audioRef} src="ambient.mp3" loop preload="auto" />
 
       <div className={"stage" + (taken ? " taken" : "")}>
         {/* LEFT (Yaroslav) */}
@@ -953,25 +2849,40 @@ function App() {
           {t.showDecor && <GridTexture accent={pal.y} />}
           {t.showDecor && <NetworkField accent={pal.y} />}
 
-          <div className="ident y">
+          <div className="ident y" aria-hidden={taken ? "true" : undefined}>
             <div className="stack">
               <div className="eyebrow">{PEOPLE.y.label}</div>
               <div className="surname">{PEOPLE.y.surname}</div>
               <div className="role">{PEOPLE.y.role.replace("_","")}<span className="cursor">&nbsp;</span></div>
+              <div style={{ display:"inline-flex", alignItems:"center", gap:7, marginTop:4,
+                background:"rgba(34,197,94,0.12)", border:"1px solid rgba(34,197,94,0.28)",
+                borderRadius:99, padding:"4px 12px 4px 8px", width:"fit-content" }}>
+                <span style={{ width:7, height:7, borderRadius:"50%", background:"#22C55E", flexShrink:0,
+                  boxShadow:"0 0 0 3px rgba(34,197,94,0.25)",
+                  animation:"concept-pulse 2s ease-in-out infinite", display:"inline-block" }} />
+                <span style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:10.5,
+                  color:"rgba(255,255,255,.85)", fontWeight:500, letterSpacing:".04em" }}>
+                  Part-time &amp; consulting
+                </span>
+              </div>
               {!taken && <pre className="ghost" aria-hidden="true">{PEOPLE.y.ghost}</pre>}
               {!taken && (
-                <span className="arrow" onClick={(e)=>{e.stopPropagation();handleTake("y");}}>
+                <span className="arrow">
                   expand <span className="ch">→</span>
                 </span>
               )}
             </div>
           </div>
 
-          {!taken && <div className="explore y">↓ systems · strategy · product</div>}
+          {!taken && <div className="explore y">{isMobile ? "tap to expand →" : "↓ systems · strategy · product"}</div>}
 
           {taken === "y" && (
             <React.Fragment>
               <button className="close" onClick={(e)=>{e.stopPropagation();setTaken(null);}} aria-label="Close">✕</button>
+              <div aria-hidden="true" style={{ position:"absolute", top:34, right:76, zIndex:9,
+                fontFamily:"'IBM Plex Mono',ui-monospace,monospace", fontSize:9, letterSpacing:".22em",
+                textTransform:"uppercase", color:"rgba(255,255,255,0.38)", pointerEvents:"none",
+                userSelect:"none" }}>Yaroslav · product</div>
               <div className="detail">
                 <div className="detail-shell">
                   <header className="detail-header">
@@ -1003,9 +2914,13 @@ function App() {
                             ? <a key={i} href={l.href} target="_blank" rel="noopener noreferrer" className={"btn " + (l.kind === "filled" ? "filled" : "")}>
                                 <span>{l.label}</span><span className="ar">→</span>
                               </a>
-                            : <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")}>
-                                <span>{l.label}</span><span className="ar">→</span>
-                              </button>
+                            : l.action === "yportfolio"
+                              ? <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")} onClick={(e)=>{e.stopPropagation();setShowYPortfolio(true);}}>
+                                  <span>{l.label}</span><span className="ar">→</span>
+                                </button>
+                              : <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")}>
+                                  <span>{l.label}</span><span className="ar">→</span>
+                                </button>
                         ))}
                       </div>
                     </div>
@@ -1024,27 +2939,42 @@ function App() {
           onClick={() => !taken && handleTake("k")}>
           {t.showDecor && <BlobField accent={pal.k} />}
 
-          <div className="ident k">
+          <div className="ident k" aria-hidden={taken ? "true" : undefined}>
             <div className="stack">
               <div className="eyebrow">{PEOPLE.k.label}</div>
               <div className="surname">{PEOPLE.k.surname}</div>
               <div className="role">{PEOPLE.k.role}</div>
+              <div style={{ display:"inline-flex", alignItems:"center", gap:7, marginTop:4,
+                background:"rgba(34,197,94,0.10)", border:"1px solid rgba(34,197,94,0.30)",
+                borderRadius:99, padding:"4px 12px 4px 8px", width:"fit-content" }}>
+                <span style={{ width:7, height:7, borderRadius:"50%", background:"#22C55E", flexShrink:0,
+                  boxShadow:"0 0 0 3px rgba(34,197,94,0.22)",
+                  animation:"concept-pulse 2s ease-in-out infinite", display:"inline-block" }} />
+                <span style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:13,
+                  color:"#1A1A1F", fontWeight:600, fontStyle:"italic", letterSpacing:".02em" }}>
+                  Available for freelance
+                </span>
+              </div>
               {!taken && (
-                <p className="bio" style={{maxWidth:"34ch"}}>{PEOPLE.k.bio}</p>
+                <p className="bio" style={{maxWidth: isMobile ? "100%" : "34ch"}}>{PEOPLE.k.bio}</p>
               )}
               {!taken && (
-                <span className="arrow" onClick={(e)=>{e.stopPropagation();handleTake("k");}}>
+                <span className="arrow">
                   expand <span className="ch">→</span>
                 </span>
               )}
             </div>
           </div>
 
-          {!taken && <div className="explore k">craft · interface · feeling</div>}
+          {!taken && <div className="explore k">{isMobile ? "tap to expand →" : "craft · interface · feeling"}</div>}
 
           {taken === "k" && (
             <React.Fragment>
               <button className="close" onClick={(e)=>{e.stopPropagation();setTaken(null);}} aria-label="Close">✕</button>
+              <div aria-hidden="true" style={{ position:"absolute", top:34, right:76, zIndex:9,
+                fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:"italic", fontSize:12,
+                color:"rgba(26,26,31,0.35)", pointerEvents:"none", userSelect:"none" }}>
+                Kseniya · design</div>
               <div className="detail">
                 <div className="detail-shell">
                   <header className="detail-header">
@@ -1077,9 +3007,13 @@ function App() {
                             ? <a key={i} href={l.href} target="_blank" rel="noopener noreferrer" className={"btn " + (l.kind === "filled" ? "filled" : "")}>
                                 <span>{l.label}</span><span className="ar">→</span>
                               </a>
-                            : <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")}>
-                                <span>{l.label}</span><span className="ar">→</span>
-                              </button>
+                            : l.action === "portfolio"
+                              ? <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")} onClick={(e)=>{e.stopPropagation();setShowPortfolio(true);}}>
+                                  <span>{l.label}</span><span className="ar">→</span>
+                                </button>
+                              : <button key={i} className={"btn " + (l.kind === "filled" ? "filled" : "")}>
+                                  <span>{l.label}</span><span className="ar">→</span>
+                                </button>
                         ))}
                       </div>
                     </div>
@@ -1155,6 +3089,11 @@ function App() {
         <TweakToggle label="Wordmark" value={t.showWordmark}
           onChange={(v) => setTweak("showWordmark", v)} />
       </TweaksPanel>
+
+      {showYPortfolio && <YaroslavPortfolioPage onClose={() => setShowYPortfolio(false)} />}
+      {showPortfolio && <PortfolioPage onClose={() => setShowPortfolio(false)} />}
+
+      <MusicButton playing={musicPlaying} blocked={autoplayBlocked} onClick={toggleMusic} />
     </React.Fragment>
   );
 }
