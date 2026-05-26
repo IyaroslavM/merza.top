@@ -652,13 +652,42 @@ const PEOPLE = {
   }
 };
 
+function useFocusTrap(ref) {
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const prev = document.activeElement;
+    const getFocusable = () => [...el.querySelectorAll(
+      'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])'
+    )];
+    const items = getFocusable();
+    if (items[0]) items[0].focus();
+    const onKey = (e) => {
+      if (e.key !== 'Tab') return;
+      const list = getFocusable();
+      const first = list[0], last = list[list.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    el.addEventListener('keydown', onKey);
+    return () => {
+      el.removeEventListener('keydown', onKey);
+      if (prev && typeof prev.focus === 'function') prev.focus();
+    };
+  }, [ref]);
+}
+
 function ProjectCards({ projects }) {
   const [visible, setVisible] = React.useState([]);
   React.useEffect(() => {
     setVisible([]);
-    projects.forEach((_, i) => {
-      setTimeout(() => setVisible(v => [...v, i]), 120 + i * 110);
-    });
+    const ids = projects.map((_, i) =>
+      setTimeout(() => setVisible(v => [...v, i]), 120 + i * 110)
+    );
+    return () => ids.forEach(clearTimeout);
   }, []);
   return (
     <div className="projects">
@@ -1718,7 +1747,6 @@ function CaseStudy({ project, index: globalIndex }) {
           </div>
           <div style={{ marginLeft:"auto", fontFamily:"'IBM Plex Mono',monospace", fontSize:9,
             color:`${project.accent}99`, letterSpacing:".08em" }}>not shipped</div>
-          <style>{`@keyframes concept-pulse{0%,100%{opacity:.4}50%{opacity:1}}`}</style>
         </div>
       )}
       {/* Header */}
@@ -1843,6 +1871,8 @@ function PortfolioPage({ onClose }) {
   React.useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
   const [scrolled, setScrolled] = React.useState(false);
   const scrollRef = React.useRef(null);
+  const overlayRef = React.useRef(null);
+  useFocusTrap(overlayRef);
 
   React.useEffect(() => {
     const el = scrollRef.current;
@@ -1897,7 +1927,8 @@ function PortfolioPage({ onClose }) {
   `;
 
   return (
-    <div className={"pf-overlay" + (mounted ? " in" : "")}>
+    <div ref={overlayRef} role="dialog" aria-modal="true" aria-label="Kseniya Merza — Portfolio"
+        className={"pf-overlay" + (mounted ? " in" : "")}>
       <style>{portfolioCss}</style>
       <div className="pf-grain" aria-hidden="true" />
 
@@ -2214,6 +2245,8 @@ function YaroslavPortfolioPage({ onClose }) {
   React.useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
   const [scrolled, setScrolled] = React.useState(false);
   const scrollRef = React.useRef(null);
+  const overlayRef = React.useRef(null);
+  useFocusTrap(overlayRef);
 
   React.useEffect(() => {
     const el = scrollRef.current;
@@ -2271,7 +2304,8 @@ function YaroslavPortfolioPage({ onClose }) {
   `;
 
   return (
-    <div className={"ypf-overlay" + (mounted ? " in" : "")}>
+    <div ref={overlayRef} role="dialog" aria-modal="true" aria-label="Yaroslav Merza — Portfolio"
+        className={"ypf-overlay" + (mounted ? " in" : "")}>
       <style>{yCss}</style>
 
       {/* Floating blobs — mirrors the NetworkField from the main page */}
@@ -2684,6 +2718,7 @@ function App() {
     .taken .detail-inner > *:nth-child(2){transition-delay:.48s}
 
     @keyframes blink{0%,45%{opacity:1}55%,100%{opacity:0}}
+    @keyframes concept-pulse{0%,100%{opacity:.4}50%{opacity:1}}
     @keyframes drift{
       0%,100%{transform:translate(0,0)}
       50%{transform:translate(2%,-1.5%)}
