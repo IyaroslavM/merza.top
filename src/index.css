@@ -1,6 +1,0 @@
-/* Base reset — the rest of the global CSS is injected as inline <style> in App.jsx
-   because it depends on runtime palette / axis values */
-*{box-sizing:border-box}
-html,body,#root{margin:0;padding:0;height:100%;overflow:hidden}
-body{font-family:ui-sans-serif,system-ui,sans-serif;color:#fff;
-  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
